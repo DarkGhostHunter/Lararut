@@ -1,5 +1,8 @@
 ![Loïc Mermilliod - Unsplash (UL) #H6KJ2D0LphU](https://images.unsplash.com/photo-1490782300182-697b80ad4293?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1280&h=400&q=80)
 
+[![Latest Stable Version](https://poser.pugx.org/darkghosthunter/lararut/v/stable)](https://packagist.org/packages/darkghosthunter/lararut) [![License](https://poser.pugx.org/darkghosthunter/lararut/license)](https://packagist.org/packages/darkghosthunter/lararut)
+![](https://img.shields.io/packagist/php-v/darkghosthunter/lararut.svg) [![Build Status](https://travis-ci.com/DarkGhostHunter/Lararut.svg?branch=master)](https://travis-ci.com/DarkGhostHunter/Lararut) [![Coverage Status](https://coveralls.io/repos/github/DarkGhostHunter/Lararut/badge.svg?branch=master)](https://coveralls.io/github/DarkGhostHunter/Lararut?branch=master) [![Maintainability](https://api.codeclimate.com/v1/badges/b07f8f752242ba1f2831/maintainability)](https://codeclimate.com/github/DarkGhostHunter/Lararut/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/b07f8f752242ba1f2831/test_coverage)](https://codeclimate.com/github/DarkGhostHunter/Lararut/test_coverage)
+
 # Lararut
 
 RutUtils integration for Laravel.
