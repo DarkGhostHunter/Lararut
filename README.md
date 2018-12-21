@@ -31,7 +31,7 @@ This package is just a Service Provider and Facade for RutUtils, but it also pro
 
 This package registers a Facade using the Rut::class, so you can access all the methods available for the RutUtils package.
 
-For example you can use the Rut Facade to transform the `rut` attribute of a Eloquent Model (like the User) into a flexible Rut instance.  
+For example you can use the Rut Facade to transform the `rut` attribute of an Eloquent Model (like the [User Model](https://github.com/laravel/laravel/tree/master/app/User.php)) into a flexible Rut instance.
 
 ```php
 <?php
@@ -57,7 +57,7 @@ class User extends Authenticatable
 }
 ```
 
-Or use in your Controllers to, in this case, only filter Ruts which are valid.
+Or use in your Controllers to, in this case, only filter RUTs which are valid.
 
 ```php
 <?php
@@ -92,11 +92,11 @@ Since it's a Facade, you can also use it for testing with Laravel. Check the [Ru
 
 ### Validation rules
 
-This package includes two four rules, `is_rut`, `is_rut_strict`, `is_rut_equal` and `rut_exists`.
+This package includes four rules, `is_rut`, `is_rut_strict`, `is_rut_equal` and `rut_exists`.
 
 #### `is_rut`
 
-This checks if the RUT being passed is a valid RUT string. This automatically cleans the RUT from anything except numbers and Verification Digit, and sees is the resulting RUT is valid.
+This checks if the RUT being passed is a valid RUT string. This automatically cleans the RUT from anything except numbers and Verification Digit, and checks if the RUT is valid.
 
 ```php
 <?php
@@ -107,14 +107,27 @@ $validator = Validator::make([
     'rut' => 'required|is_rut'
 ]);
 
-echo $validator->fails(); // false
+echo $validator->passes(); // true
 ```
 
-It also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are valid.
+It also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are valid, and false if at least one is invalid.
+
+```php
+<?php
+
+$validator = Validator::make([
+    'rut' => ['14328145-0', '12.343.580-K', 'thisisnotarut']
+], [
+    'rut' => 'required|is_rut'
+]);
+
+echo $validator->passes(); // true
+```
+
 
 #### `is_rut_strict` 
 
-This works the same as `is_rut`, but it will validate RUTs only using the correct format with thousand separator and a hyphen before the Validation Digit.
+This works the same as `is_rut`, but it will validate RUTs that are also using the correct RUT format: with thousand separator and a hyphen before the Validation Digit.
 
 ```php
 <?php
@@ -125,14 +138,14 @@ $validator = Validator::make([
     'rut' => 'required|is_rut_strict'
 ]);
 
-echo $validator->fails(); // true
+echo $validator->passes(); // false
 ```
 
 It also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are valid.
 
 #### `is_rut_equal` 
 
-This will check if the RUT is equal to another RUT, like for example, one inside your Database.
+This will check if the RUT is equal to another RUT, like for example, one inside your Database. They will be cleaned.
  
 ```php
 <?php
