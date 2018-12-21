@@ -100,6 +100,25 @@ class ServiceProviderTest extends TestCase
         $this->assertArrayHasKey('rut4', $validates->failed());
     }
 
+    public function testValidatorIsRutEqualFails()
+    {
+        /** @var \Illuminate\Validation\Factory $validator */
+        $validator = $this->app->make('validator');
+
+        $validates = $validator->make([
+            'rut1' => 'asdasdas',
+            'rut2' => '14328145-0',
+        ], [
+            'rut1' => 'required|is_rut_equal:' . '94.328.145-0',
+            'rut2' => 'required|is_rut_equal:' . 'asdasdasd',
+        ]);
+
+        $this->assertTrue($validates->fails());
+
+        $this->assertArrayHasKey('rut1', $validates->failed());
+        $this->assertArrayHasKey('rut2', $validates->failed());
+    }
+
     public function testRegistersRutService()
     {
         $this->assertInstanceOf(Rut::class, $this->app->make(Rut::class));
