@@ -38,7 +38,7 @@
         "DarkGhostHunter\\Lararut\\LararutServiceProvider"
       ],
       "aliases": {
-        "Rut": "DarkGhostHunter\\Lararut\\Facades\\RutFacade"
+        "Rut": "DarkGhostHunter\\Lararut\\Facades\\Rut"
       }
     }
   }

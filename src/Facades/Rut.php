@@ -2,7 +2,7 @@
 
 namespace DarkGhostHunter\Lararut\Facades;
 
-use DarkGhostHunter\RutUtils\Rut;
+use DarkGhostHunter\RutUtils\Rut as RutAccessor;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Facade;
  * @method string jsonSerialize()
  * 
  */
-class RutFacade extends Facade
+class Rut extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -43,6 +43,6 @@ class RutFacade extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return Rut::class;
+        return RutAccessor::class;
     }
 }

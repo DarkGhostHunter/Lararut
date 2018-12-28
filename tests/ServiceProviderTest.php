@@ -19,7 +19,7 @@ class ServiceProviderTest extends TestCase
 
     protected function getPackageAliases($app)
     {
-        return ['Rut' => 'DarkGhostHunter\Lararut\Facades\RutFacade'];
+        return ['Rut' => 'DarkGhostHunter\Lararut\Facades\Rut'];
     }
 
     /**
