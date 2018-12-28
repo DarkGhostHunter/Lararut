@@ -5,14 +5,13 @@
 
 # Lararut
 
-RutUtils integration for Laravel.
-
-This package allows you to use [RutUtils](https://github.com/DarkGhostHunter/RutUtils/), a package for manipulating RUTs in your PHP project, with Laravel.
+This package integrates the [RutUtils](https://github.com/DarkGhostHunter/RutUtils/) package, allowing manipulation of RUTs in your PHP project, with Laravel.
 
 Additionally, it includes 4 new rules to validate RUT data conveniently.
 
 ## Requirements
 
+- PHP 7.1.3+
 - Laravel 5.7+ (Lumen *may* work)
 
 ## Installation
@@ -29,9 +28,9 @@ This package is just a Service Provider and Facade for RutUtils, but it also pro
 
 ### `Rut` Facade
 
-This package registers a Facade using the Rut::class, so you can access all the methods available for the RutUtils package.
+This package registers a Facade using the `Rut` class, so you can access all the methods available for the RutUtils package from just calling it.
 
-For example you can use the Rut Facade to transform the `rut` attribute of a Eloquent Model (like the User) into a flexible Rut instance.  
+For example, you can use the Rut Facade to transform the `rut` attribute of an Eloquent Model (like the [User Model](https://github.com/laravel/laravel/tree/master/app/User.php)) into a flexible Rut instance.
 
 ```php
 <?php
@@ -57,7 +56,7 @@ class User extends Authenticatable
 }
 ```
 
-Or use in your Controllers to, in this case, only filter Ruts which are valid.
+Or use it in your Controllers to, in this case, only filter RUTs which are valid.
 
 ```php
 <?php
@@ -88,18 +87,44 @@ class DoesSomethingController extends Controller
 }
 ```
 
-Since it's a Facade, you can also use it for testing with Laravel. Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods.
-
-### Validation rules
-
-This package includes two four rules, `is_rut`, `is_rut_strict`, `is_rut_equal` and `rut_exists`.
-
-#### `is_rut`
-
-This checks if the RUT being passed is a valid RUT string. This automatically cleans the RUT from anything except numbers and Verification Digit, and sees is the resulting RUT is valid.
+Since it's a Facade, you can also use it for [testing with Laravel](https://laravel.com/docs/5.7/mocking#mocking-facades).
 
 ```php
 <?php
+
+namespace Tests\Feature;
+
+use Tests\TestCase;
+use Rut;
+
+class RegisterControllerTest extends TestCase
+{
+    public function testUserRegistersFamily()
+    {
+        Rut::shouldReceive('filter')
+            ->once()
+            ->with($this->isType('array'))
+            ->andReturn(true);
+        
+        // ...
+    }
+}
+```
+
+Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods.
+
+### Validation rules
+
+This package includes four rules, `is_rut`, `is_rut_strict`, `is_rut_equal` and `rut_exists`.
+
+#### `is_rut`
+
+This checks if the RUT being passed is a valid RUT string. This automatically cleans the RUT from anything except numbers and Verification Digit, and checks if the RUT is valid.
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
 
 $validator = Validator::make([
     'rut' => '14328145-0'
@@ -107,17 +132,34 @@ $validator = Validator::make([
     'rut' => 'required|is_rut'
 ]);
 
-echo $validator->fails(); // false
+echo $validator->passes(); // true
 ```
 
-It also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are valid.
-
-#### `is_rut_strict` 
-
-This works the same as `is_rut`, but it will validate RUTs only using the correct format with thousand separator and a hyphen before the Validation Digit.
+It also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are valid, and false if at least one is invalid.
 
 ```php
 <?php
+
+use Illuminate\Support\Facades\Validator;
+
+$validator = Validator::make([
+    'rut' => ['14328145-0', '12.343.580-K', 'thisisnotarut']
+], [
+    'rut' => 'required|array|is_rut'
+]);
+
+echo $validator->fails(); // true
+```
+
+
+#### `is_rut_strict` 
+
+This works the same as `is_rut`, but it will validate RUTs that are also using the correct RUT format: with thousand separator and a hyphen before the Validation Digit.
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
 
 $validator = Validator::make([
     'rut' => '14328145-0'
@@ -125,17 +167,20 @@ $validator = Validator::make([
     'rut' => 'required|is_rut_strict'
 ]);
 
-echo $validator->fails(); // true
+echo $validator->fails(); // false
 ```
 
 It also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are valid.
 
 #### `is_rut_equal` 
 
-This will check if the RUT is equal to another RUT, like for example, one inside your Database.
+This will check if the RUT is equal to another RUT, like for example, one inside your Database. They will be cleaned.
  
 ```php
 <?php
+
+use Illuminate\Support\Facades\Validator;
+
 $validator = Validator::make([
     'rut' => '12.343.580-K'
 ], [
@@ -151,10 +196,13 @@ It also accepts an `array` of RUTs. In that case, `is_rut` will return true if a
 
 Instead of using Laravel's [exists](https://laravel.com/docs/master/validation#rule-exists), you can use `rut_exist` in case your database has separated columns for RUT Number and Verification Digit.
 
-For this to work you need to issue your table, connection (optionally), Number column and Verification Digit column.
+For this to work you need to set the table to look for, Number column and Verification Digit column. Optionally, you can set the connection using dot notation.
  
 ```php
 <?php
+
+use Illuminate\Support\Facades\Validator;
+
 $validator = Validator::make([
     'rut' => '12.343.580-K'
 ], [
