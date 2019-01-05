@@ -194,7 +194,7 @@ It also accepts an `array` of RUTs. In that case, `is_rut` will return true if a
 
 #### `rut_exists` (Database)
 
-Instead of using Laravel's [exists](https://laravel.com/docs/master/validation#rule-exists), you can use `rut_exist` in case your database has separated columns for RUT Number and Verification Digit.
+Instead of using Laravel's [exists](https://laravel.com/docs/master/validation#rule-exists), you can use `rut_exists` in case your database has separated columns for RUT Number and Verification Digit.
 
 For this to work you need to set the table to look for, Number column and Verification Digit column. Optionally, you can set the connection using dot notation.
  
@@ -206,13 +206,15 @@ use Illuminate\Support\Facades\Validator;
 $validator = Validator::make([
     'rut' => '12.343.580-K'
 ], [
-    'rut' => 'required|rut_exist:mysql.users,rut_num,rut_vd' 
+    'rut' => 'required|rut_exists:mysql.users,rut_num,rut_vd' 
 ]);
 
 echo $validator->fails(); // false
 ```
 
 Since this also checks if the RUT is valid, it will return false if its not, or the RUT doesn't exists in the database.
+
+> Having separated columns for the RUT number and verification digits is usually the best approach to persist them. The number can be saved as 4 byte unsigned `int`, and the latter as a 1 byte `varchar` (1 character length).
 
 ## License
 
