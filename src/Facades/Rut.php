@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\Facade;
  *
  * @method static array|Rut make(...$ruts)
  * @method static array|Rut makeValid(...$ruts)
- * @method Rut addRut(string $rut)
  * @method static Rut allUppercase()
  * @method static Rut allLowercase()
  * @method string toRawString()

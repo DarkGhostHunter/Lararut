@@ -4,7 +4,6 @@ namespace Tests;
 
 use DarkGhostHunter\RutUtils\Rut;
 use DarkGhostHunter\RutUtils\RutBuilder;
-use Illuminate\Support\Facades\Facade;
 use Orchestra\Testbench\TestCase;
 
 class ServiceProviderTest extends TestCase
