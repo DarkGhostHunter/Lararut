@@ -113,6 +113,43 @@ class RegisterControllerTest extends TestCase
 
 Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods.
 
+### Helper
+
+Sometimes you want to quickly create a RUT from scratch anywhere in your code. You can use the included quick helper `rut()` to do so, which just serves as an alias to `Rut::make`.
+
+```php
+<?php
+
+namespace App\Http\Listeners;
+
+use Illuminate\Auth\Events\Lockout;
+use App\Notifications\ProbablyForgotPassword;
+use App\User;
+
+class LogFailedAttempt
+{
+    /**
+     * Handle the event.
+     *
+     * @param  Lockout  $event
+     * @throws \DarkGhostHunter\RutUtils\Exceptions\InvalidRutException
+     * @return void
+     */
+    public function handle(Lockout $event)
+    {
+        // Get the RUT from the request input
+        $rut = rut($event->request->input('rut'));
+        
+        // If the user who tried exists in the database
+        if ($user = User::whereNum($rut->num)->first()) {
+            
+            // Help him with a link to reset his password
+            $user->notify(new ProbablyForgotPassword());
+        }
+    }
+}
+```
+
 ### Validation rules
 
 This package includes four rules, `is_rut`, `is_rut_strict`, `is_rut_equal` and `rut_exists`.
