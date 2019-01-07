@@ -270,6 +270,8 @@ echo $validator->passes(); // false
 
 Since this also checks if the RUT is valid, it will return false if its not, or the RUT doesn't exists in the database.
 
+The rule will automatically set to uppercase the verification digit column, so it won't matter if in your column you manage `k` as lowercase.
+
 > Having separated columns for the RUT number and verification digits is usually the best approach to persist them. The number can be saved as 4 byte unsigned `int`, and the latter as a 1 byte `varchar` (1 character length).
 
 ## License

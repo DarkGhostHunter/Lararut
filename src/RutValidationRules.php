@@ -83,7 +83,7 @@ class RutValidationRules
             ->connection($connection)
             ->table($table)
             ->where(trim($parameters[1], ' '), $rut->num)
-            ->whereRaw('upper("' .trim($parameters[2]) . '") = ?', [$rut->vd])
+            ->whereRaw('upper("' .trim($parameters[2]) . '") = ?', [strtoupper($rut->vd)])
             ->exists();
     }
 }
