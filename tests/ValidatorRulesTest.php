@@ -49,7 +49,7 @@ class ValidatorRulesTest extends TestCase
             'email' => 'johndoe@email.com',
             'password' => '123456',
             'rut_number' => $this->rut->num,
-            'rut_vd' => $this->rut->vd,
+            'rut_vd' => strtolower($this->rut->vd),
         ]);
 
     }

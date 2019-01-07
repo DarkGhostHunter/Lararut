@@ -76,12 +76,14 @@ class RutValidationRules
             ? explode('.', $parameters[0], 2)
             : [null, $parameters[0]];
 
-        $builder = app('db')
+        // Here we will call the DB and ask for the number and verification
+        // digit. For the latter we will need to uppercase the column and
+        // then ask, because there is no guarantee the VD is uppercase.
+        return app('db')
             ->connection($connection)
             ->table($table)
             ->where(trim($parameters[1], ' '), $rut->num)
-            ->where(trim($parameters[2], ' '), $rut->vd);
-
-        return $builder->exists();
+            ->whereRaw('upper("' .trim($parameters[2]) . '") = ?', [$rut->vd])
+            ->exists();
     }
 }
