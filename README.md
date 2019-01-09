@@ -143,7 +143,7 @@ class LogFailedAttempt
         // If the user who tried exists in the database
         if ($user = User::whereNum($rut->num)->first()) {
             
-            // Help him with a link to reset his password
+            // Help sending him a link to reset his password
             $user->notify(new ProbablyForgotPassword());
         }
     }
@@ -203,7 +203,7 @@ $validator = Validator::make([
     'rut' => 'required|array|is_rut'
 ]);
 
-echo $validator->passes(); // true
+echo $validator->fails(); // false
 ```
 
 #### `is_rut_strict` 
@@ -226,7 +226,7 @@ $validator = Validator::make([
 echo $validator->fails(); // false
 ```
 
-This rule also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are properly formatted and valid.
+This rule also accepts an `array` of RUTs. In that case, `is_rut_strict` will return true if all of the RUTs are properly formatted and valid.
 
 #### `is_rut_equal` 
 
@@ -246,7 +246,22 @@ $validator = Validator::make([
 echo $validator->fails(); // false
 ```
 
-It also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are valid and equal to each other.
+It also accepts an `array` of RUTs, which saves you to do multiple `is_rut_equal`. In these cases, `is_rut_equal` will return true if all of the RUTs are valid and equal to each other.
+
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
+
+$validator = Validator::make([
+    'rut' => '12.343.580-K'
+], [
+    'rut' => 'required|is_rut_equal:12343!580K,12.343.580-K' 
+]);
+
+echo $validator->fails(); // false
+```
 
 #### `rut_exists` (Database)
 

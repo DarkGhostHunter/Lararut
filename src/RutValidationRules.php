@@ -12,10 +12,10 @@ class RutValidationRules
     /**
      * Returns if the RUTs are valid
      *
-     * @param $attribute
-     * @param $value
-     * @param $parameters
-     * @param $validator
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @param \Illuminate\Validation\Validator $validator
      * @return bool
      */
     public function isRut($attribute, $value, $parameters, $validator)
@@ -26,10 +26,10 @@ class RutValidationRules
     /**
      * Returns if the RUTs are valid and properly formatted
      *
-     * @param $attribute
-     * @param $value
-     * @param $parameters
-     * @param $validator
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @param \Illuminate\Validation\Validator $validator
      * @return bool
      */
     public function isRutStrict($attribute, $value, $parameters, $validator)
@@ -40,28 +40,24 @@ class RutValidationRules
     /**
      * Returns if the RUT is equal to another
      *
-     * @param $attribute
-     * @param $value
-     * @param $parameters
-     * @param $validator
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @param \Illuminate\Validation\Validator $validator
      * @return bool
      */
     public function isRutEqual($attribute, $value, $parameters, $validator)
     {
-        try {
-            return RutHelper::isEqual($value, $parameters[0]);
-        } catch (InvalidRutException $exception) {
-            return false;
-        }
+        return RutHelper::isEqual($value, $parameters[0]);
     }
 
     /**
      * Returns if the RUT exist in the Database
      *
-     * @param $attribute
-     * @param $value
-     * @param $parameters
-     * @param $validator
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @param \Illuminate\Validation\Validator $validator
      * @return bool
      */
     public function rutExists($attribute, $value, $parameters, $validator)
