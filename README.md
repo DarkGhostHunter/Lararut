@@ -113,9 +113,11 @@ class RegisterControllerTest extends TestCase
 
 Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods.
 
-### Helper
+### Helpers
 
-Sometimes you want to quickly create a RUT from scratch anywhere in your code. You can use the included quick helper `rut()` to do so, which just serves as an alias to `Rut::make`.
+This package also [includes `RutUtils` helpers](https://github.com/DarkGhostHunter/RutUtils/#global-helper-functions) file, which allows you to use simple functions anywhere in your code.
+
+Additionally, this includes `rut()` function to quickly create a RUT from scratch, which just serves as an alias to `Rut::make`.
 
 ```php
 <?php
@@ -123,7 +125,9 @@ Sometimes you want to quickly create a RUT from scratch anywhere in your code. Y
 namespace App\Http\Listeners;
 
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\Support\Facades\Notification;
 use App\Notifications\ProbablyForgotPassword;
+use App\Notifications\SupportReadyToHelp;
 use App\User;
 
 class LogFailedAttempt
@@ -141,7 +145,7 @@ class LogFailedAttempt
         $rut = rut($event->request->input('rut'));
         
         // If the user who tried exists in the database
-        if ($user = User::whereNum($rut->num)->first()) {
+        if ($user = User::where('rut_num', $rut->num)->first()) {
             
             // Help sending him a link to reset his password
             $user->notify(new ProbablyForgotPassword());
