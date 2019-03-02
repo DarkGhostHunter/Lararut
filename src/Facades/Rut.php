@@ -6,9 +6,10 @@ use DarkGhostHunter\RutUtils\Rut as RutAccessor;
 use Illuminate\Support\Facades\Facade;
 
 /**
+ * @method static string cleanRut(string $rut, bool $forceUppercase = true)
  * @method static bool validate(...$ruts)
  * @method static bool validateStrict(...$ruts)
- * @method static bool areEqual(string $rutA, string $rutB)
+ * @method static bool isEqual(...$ruts)
  * @method static array filter(...$ruts)
  * @method static Rut rectify(int $num)
  * @method static bool isPerson(string $rut)

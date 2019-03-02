@@ -26,7 +26,7 @@ class ValidatorRulesTest extends TestCase
      *
      * @return void
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 
@@ -117,4 +117,37 @@ class ValidatorRulesTest extends TestCase
         $this->assertArrayHasKey('rut1', $validates->failed());
         $this->assertArrayHasKey('rut2', $validates->failed());
     }
+
+    public function testValidatorIsRutEqualsMultiple()
+    {
+        /** @var \Illuminate\Validation\Factory $validator */
+        $validator = $this->app->make('validator');
+
+        $validates = $validator->make([
+            'rut1' => '94.328.145-0',
+            'rut2' => '14328145-0',
+        ], [
+            'rut1' => 'required|is_rut_equal:94.328.145-0,943281450, 94328145-0',
+            'rut2' => 'required|is_rut_equal:14328145-0, 14.328.145-0',
+        ]);
+
+        $this->assertTrue($validates->passes());
+    }
+
+    public function testValidatorIsRutEqualsMultipleFails()
+    {
+        /** @var \Illuminate\Validation\Factory $validator */
+        $validator = $this->app->make('validator');
+
+        $validates = $validator->make([
+            'rut1' => '94.328.145-0',
+            'rut2' => '94.328.145-0',
+        ], [
+            'rut1' => 'required|is_rut_equal:94.328.145-0,943281450, 94328145-0',
+            'rut2' => 'required|is_rut_equal:14328145-0, 14.328.145-0',
+        ]);
+
+        $this->assertTrue($validates->fails());
+    }
+
 }

@@ -12,7 +12,9 @@ Additionally, it includes 4 new rules to validate RUT data conveniently.
 ## Requirements
 
 - PHP 7.1.3+
-- Laravel 5.7+ (Lumen *may* work)
+- Laravel 5.8 (Lumen *may* work)
+
+> Check older releases for older Laravel versions.
 
 ## Installation
 
@@ -113,9 +115,11 @@ class RegisterControllerTest extends TestCase
 
 Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods.
 
-### Helper
+### Helpers
 
-Sometimes you want to quickly create a RUT from scratch anywhere in your code. You can use the included quick helper `rut()` to do so, which just serves as an alias to `Rut::make`.
+This package also [includes `RutUtils` helpers](https://github.com/DarkGhostHunter/RutUtils/#global-helper-functions) file, which allows you to use simple functions anywhere in your code.
+
+Additionally, this includes `rut()` function to quickly create a RUT from scratch, which just serves as an alias to `Rut::make`.
 
 ```php
 <?php
@@ -123,7 +127,9 @@ Sometimes you want to quickly create a RUT from scratch anywhere in your code. Y
 namespace App\Http\Listeners;
 
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\Support\Facades\Notification;
 use App\Notifications\ProbablyForgotPassword;
+use App\Notifications\SupportReadyToHelp;
 use App\User;
 
 class LogFailedAttempt
@@ -141,9 +147,9 @@ class LogFailedAttempt
         $rut = rut($event->request->input('rut'));
         
         // If the user who tried exists in the database
-        if ($user = User::whereNum($rut->num)->first()) {
+        if ($user = User::where('rut_num', $rut->num)->first()) {
             
-            // Help him with a link to reset his password
+            // Help sending him a link to reset his password
             $user->notify(new ProbablyForgotPassword());
         }
     }
@@ -203,7 +209,7 @@ $validator = Validator::make([
     'rut' => 'required|array|is_rut'
 ]);
 
-echo $validator->passes(); // true
+echo $validator->fails(); // false
 ```
 
 #### `is_rut_strict` 
@@ -226,7 +232,7 @@ $validator = Validator::make([
 echo $validator->fails(); // false
 ```
 
-This rule also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are properly formatted and valid.
+This rule also accepts an `array` of RUTs. In that case, `is_rut_strict` will return true if all of the RUTs are properly formatted and valid.
 
 #### `is_rut_equal` 
 
@@ -246,7 +252,22 @@ $validator = Validator::make([
 echo $validator->fails(); // false
 ```
 
-It also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are valid and equal to each other.
+It also accepts an `array` of RUTs, which saves you to do multiple `is_rut_equal`. In these cases, `is_rut_equal` will return true if all of the RUTs are valid and equal to each other.
+
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
+
+$validator = Validator::make([
+    'rut' => '12.343.580-K'
+], [
+    'rut' => 'required|is_rut_equal:12343!580K,12.343.580-K' 
+]);
+
+echo $validator->fails(); // false
+```
 
 #### `rut_exists` (Database)
 
@@ -272,7 +293,7 @@ Since this also checks if the RUT is valid, it will return false if its not, or 
 
 The rule will automatically set to uppercase the verification digit column, so it won't matter if in your column you manage `k` as lowercase.
 
-> Having separated columns for the RUT number and verification digits is usually the best approach to persist them. The number can be saved as 4 byte unsigned `int`, and the latter as a 1 byte `varchar` (1 character length).
+> Having separated columns for the RUT number and verification digits is usually the best approach to persist them. The number can be saved as 4 byte unsigned `int`, and the latter as a 1 byte `string` (1 character length).
 
 ## License
 

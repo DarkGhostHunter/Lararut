@@ -21,7 +21,7 @@ class HelpersTest extends TestCase
         return ['Rut' => 'DarkGhostHunter\Lararut\Facades\Rut'];
     }
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
 

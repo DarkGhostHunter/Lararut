@@ -17,10 +17,16 @@ class LararutServiceProvider extends ServiceProvider
         /** @var \Illuminate\Validation\Factory $validator */
         $validator = $this->app->make('validator');
 
-        $validator->extend('is_rut', 'DarkGhostHunter\Lararut\RutValidationRules@isRut');
-        $validator->extend('is_rut_strict', 'DarkGhostHunter\Lararut\RutValidationRules@isRutStrict');
-        $validator->extend('is_rut_equal', 'DarkGhostHunter\Lararut\RutValidationRules@isRutEqual');
-        $validator->extend('rut_exists', 'DarkGhostHunter\Lararut\RutValidationRules@rutExists');
+        $rules = [
+            'is_rut'        => 'DarkGhostHunter\Lararut\RutValidationRules@isRut',
+            'is_rut_strict' => 'DarkGhostHunter\Lararut\RutValidationRules@isRutStrict',
+            'is_rut_equal'  => 'DarkGhostHunter\Lararut\RutValidationRules@isRutEqual',
+            'rut_exists'    => 'DarkGhostHunter\Lararut\RutValidationRules@rutExists',
+        ];
+
+        foreach ($rules as $key => $rule) {
+            $validator->extend($key, $rule);
+        }
     }
 
     /**
