@@ -12,7 +12,9 @@ Additionally, it includes 4 new rules to validate RUT data conveniently.
 ## Requirements
 
 - PHP 7.1.3+
-- Laravel 5.7+ (Lumen *may* work)
+- Laravel 5.8 (Lumen *may* work)
+
+> Check older releases for older Laravel versions.
 
 ## Installation
 
@@ -291,7 +293,7 @@ Since this also checks if the RUT is valid, it will return false if its not, or 
 
 The rule will automatically set to uppercase the verification digit column, so it won't matter if in your column you manage `k` as lowercase.
 
-> Having separated columns for the RUT number and verification digits is usually the best approach to persist them. The number can be saved as 4 byte unsigned `int`, and the latter as a 1 byte `varchar` (1 character length).
+> Having separated columns for the RUT number and verification digits is usually the best approach to persist them. The number can be saved as 4 byte unsigned `int`, and the latter as a 1 byte `string` (1 character length).
 
 ## License
 
