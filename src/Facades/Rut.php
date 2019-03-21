@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool isPerson(string $rut)
  * @method static bool isCompany(string $rut)
  *
- * @method static array|\DarkGhostHunter\RutUtils\Rut generate(int $iterations = 1, bool $unwrapSingle = true)
+ * @method static \DarkGhostHunter\RutUtils\Rut|array generate(int $iterations = 1, bool $unwrapSingle = true)
  * @method static \DarkGhostHunter\RutUtils\RutBuilder unique()
  * @method static \DarkGhostHunter\RutUtils\RutBuilder notUnique()
  * @method static \DarkGhostHunter\RutUtils\RutBuilder asCompany()
@@ -24,10 +24,12 @@ use Illuminate\Support\Facades\Facade;
  * @method static \DarkGhostHunter\RutUtils\RutBuilder asString()
  * @method static \DarkGhostHunter\RutUtils\RutBuilder asObject()
  *
- * @method static array|\DarkGhostHunter\RutUtils\Rut make(...$ruts)
- * @method static array|\DarkGhostHunter\RutUtils\Rut makeValid(...$ruts)
+ * @method static \DarkGhostHunter\RutUtils\Rut\array make(...$ruts)
+ * @method static \DarkGhostHunter\RutUtils\Rut\array makeValid(...$ruts)
  * @method static \DarkGhostHunter\RutUtils\Rut allUppercase()
  * @method static \DarkGhostHunter\RutUtils\Rut allLowercase()
+ * @method static void setStringFormat(string $format)
+ * @method static string getStringFormat()
  * @method string toRawString()
  * @method string toFormattedString()
  * @method array toArray()

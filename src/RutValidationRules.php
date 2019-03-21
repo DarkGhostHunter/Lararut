@@ -82,4 +82,18 @@ class RutValidationRules
             ->whereRaw('upper("' .trim($parameters[2]) . '") = ?', [strtoupper($rut->vd)])
             ->exists();
     }
+
+    /**
+     * Returns if the RUT exist in the Database
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @param \Illuminate\Validation\Validator $validator
+     * @return bool
+     */
+    public function rutUnique($attribute, $value, $parameters, $validator)
+    {
+        return ! $this->rutExists(...func_get_args());
+    }
 }
