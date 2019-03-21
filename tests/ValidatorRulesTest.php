@@ -8,7 +8,7 @@ use Orchestra\Testbench\TestCase;
 
 class ValidatorRulesTest extends TestCase
 {
-    /** @var Rut */
+    /** @var \DarkGhostHunter\RutUtils\Rut */
     protected $rut;
 
     protected function getPackageProviders($app)
@@ -145,6 +145,38 @@ class ValidatorRulesTest extends TestCase
         ], [
             'rut1' => 'required|is_rut_equal:94.328.145-0,943281450, 94328145-0',
             'rut2' => 'required|is_rut_equal:14328145-0, 14.328.145-0',
+        ]);
+
+        $this->assertTrue($validates->fails());
+    }
+
+    public function testValidatorRutUnique()
+    {
+        /** @var \Illuminate\Validation\Factory $validator */
+        $validator = $this->app->make('validator');
+
+        do {
+            $rut_different = Rut::generate();
+        } while ($rut_different->num === $this->rut->num);
+
+        $validates = $validator->make([
+            'rut1' => $rut_different->toFormattedString(),
+        ], [
+            'rut1' => 'required|rut_unique:testing.users,rut_number,rut_vd',
+        ]);
+
+        $this->assertTrue($validates->passes());
+    }
+
+    public function testValidatorRutUniqueFails()
+    {
+        /** @var \Illuminate\Validation\Factory $validator */
+        $validator = $this->app->make('validator');
+
+        $validates = $validator->make([
+            'rut1' => $this->rut->toFormattedString(),
+        ], [
+            'rut1' => 'required|rut_unique:testing.users,rut_number,rut_vd',
         ]);
 
         $this->assertTrue($validates->fails());

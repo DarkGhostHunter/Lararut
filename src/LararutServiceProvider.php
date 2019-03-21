@@ -11,6 +11,7 @@ class LararutServiceProvider extends ServiceProvider
      * Bootstrap the application services.
      *
      * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function boot()
     {
@@ -22,6 +23,7 @@ class LararutServiceProvider extends ServiceProvider
             'is_rut_strict' => 'DarkGhostHunter\Lararut\RutValidationRules@isRutStrict',
             'is_rut_equal'  => 'DarkGhostHunter\Lararut\RutValidationRules@isRutEqual',
             'rut_exists'    => 'DarkGhostHunter\Lararut\RutValidationRules@rutExists',
+            'rut_unique'    => 'DarkGhostHunter\Lararut\RutValidationRules@rutUnique',
         ];
 
         foreach ($rules as $key => $rule) {

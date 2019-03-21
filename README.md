@@ -295,6 +295,25 @@ The rule will automatically set to uppercase the verification digit column, so i
 
 > Having separated columns for the RUT number and verification digits is usually the best approach to persist them. The number can be saved as 4 byte unsigned `int`, and the latter as a 1 byte `string` (1 character length).
 
+
+#### `rut_unique` (Database)
+
+This works the same as the `rut_exists` rule, but instead of checking if the RUT exists in the Database, it will detect if it doesn't. Basically just like the Laravel `unique` rule works but at a very basic level.
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
+
+$validator = Validator::make([
+    'rut' => '12.343.580-K'
+], [
+    'rut' => 'required|rut_unique:mysql.users,rut_num,rut_vd' 
+]);
+
+echo $validator->passes(); // false
+```
+
 ## License
 
 This package is licenced by the [MIT License](LICENSE).
