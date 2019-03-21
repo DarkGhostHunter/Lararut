@@ -24,8 +24,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static \DarkGhostHunter\RutUtils\RutBuilder asString()
  * @method static \DarkGhostHunter\RutUtils\RutBuilder asObject()
  *
- * @method static \DarkGhostHunter\RutUtils\Rut\array make(...$ruts)
- * @method static \DarkGhostHunter\RutUtils\Rut\array makeValid(...$ruts)
+ * @method static \DarkGhostHunter\RutUtils\Rut|array make(...$ruts)
+ * @method static \DarkGhostHunter\RutUtils\Rut|array makeValid(...$ruts)
  * @method static \DarkGhostHunter\RutUtils\Rut allUppercase()
  * @method static \DarkGhostHunter\RutUtils\Rut allLowercase()
  * @method static void setStringFormat(string $format)
@@ -34,7 +34,8 @@ use Illuminate\Support\Facades\Facade;
  * @method string toFormattedString()
  * @method array toArray()
  * @method string jsonSerialize()
- * 
+ * @method string toJson()
+ *
  */
 class Rut extends Facade
 {
