@@ -36,16 +36,20 @@ class ValidateRutExistsTest extends TestCase
 
     public function testRutExistsWithColumnGuessing()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString(),
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => 'rut_exists:testing.users'
         ]);
 
         $this->assertFalse($validator->fails());
 
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString(),
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => 'rut_exists:testing.users,rut_num'
         ]);
