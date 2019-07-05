@@ -25,8 +25,10 @@ class ValidateRuleRutExistsTest extends TestCase
 
     public function testValidationRuleRutExists()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
         ]);
@@ -106,8 +108,10 @@ class ValidateRuleRutExistsTest extends TestCase
 
     public function testValidationRuleRutExistsFailWhenInvalidColumn()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutExists('testing.users', 'absent_num', 'absent_vd')
         ]);
