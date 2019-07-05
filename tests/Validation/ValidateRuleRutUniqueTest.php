@@ -25,9 +25,11 @@ class ValidateRuleRutUniqueTest extends TestCase
 
     public function testValidationRuleRutUnique()
     {
+        $user = User::inRandomOrder()->first();
+
         do {
             $rut = Rut::generate();
-        } while ($rut === $this->getRut($this->user1));
+        } while ($rut === Rut::make($user->rut_num . $user->rut_vd));
 
         $validator = Validator::make([
             'rut' => $rut->toFormattedString()
@@ -40,8 +42,10 @@ class ValidateRuleRutUniqueTest extends TestCase
 
     public function testValidationRuleRutUniqueIgnoringId()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
                 ->ignore($this->user1->getKey())
@@ -52,8 +56,10 @@ class ValidateRuleRutUniqueTest extends TestCase
 
     public function testValidationRuleRutUniqueIgnoringModel()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
                 ->ignoreModel($this->user1)
@@ -64,8 +70,10 @@ class ValidateRuleRutUniqueTest extends TestCase
 
     public function testValidationRuleRutUniqueIgnoringModelInIgnoreMethod()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
                 ->ignore($this->user1)
@@ -76,8 +84,10 @@ class ValidateRuleRutUniqueTest extends TestCase
 
     public function testValidationRuleRutUniqueWhere()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
                 ->where('name', 'Anything that is not John')
@@ -85,8 +95,10 @@ class ValidateRuleRutUniqueTest extends TestCase
 
         $this->assertFalse($validator->fails());
 
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
                 ->where('name', 'John')

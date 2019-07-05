@@ -48,16 +48,4 @@ trait PreparesDatabase
 
         $this->user2->save();
     }
-
-    /**
-     * Returns a testing user RUT
-     *
-     * @param \Illuminate\Foundation\Auth\User $user
-     * @return array|\DarkGhostHunter\RutUtils\Rut
-     * @throws \DarkGhostHunter\RutUtils\Exceptions\InvalidRutException
-     */
-    protected function getRut(User $user)
-    {
-        return Rut::make($user->rut_num . $user->rut_vd);
-    }
 }

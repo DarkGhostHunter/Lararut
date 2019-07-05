@@ -54,8 +54,10 @@ class ValidateRutUniqueTest extends TestCase
 
     public function testUniqueFailsWhenNotUnique()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString(),
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => 'rut_unique:testing.users,rut_num,rut_vd'
         ]);

@@ -38,8 +38,10 @@ class ValidateRuleRutExistsTest extends TestCase
 
     public function testValidationRuleRutExistsWithColumnGuessing()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutExists('testing.users')
         ]);
@@ -49,8 +51,10 @@ class ValidateRuleRutExistsTest extends TestCase
 
     public function testValidationRuleRutExistsWithWhere()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
                 ->where('name', 'John')
@@ -63,8 +67,10 @@ class ValidateRuleRutExistsTest extends TestCase
     {
         $this->expectException(ArgumentCountError::class);
 
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString()
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutExists()
         ]);
@@ -93,9 +99,11 @@ class ValidateRuleRutExistsTest extends TestCase
 
     public function testValidationRuleRutExistsFailWhenRutDoesntExists()
     {
+        $user = User::inRandomOrder()->first();
+
         do {
             $rut = Rut::generate();
-        } while ($rut === $this->getRut($this->user1));
+        } while ($rut === Rut::make($user->rut_num . $user->rut_vd));
 
         $validator = Validator::make([
             'rut' => $rut->toFormattedString()

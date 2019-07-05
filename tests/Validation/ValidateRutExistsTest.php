@@ -59,9 +59,11 @@ class ValidateRutExistsTest extends TestCase
 
     public function testRutExistsFailsWhenDoesntExists()
     {
+        $user = User::inRandomOrder()->first();
+
         do {
             $rut = Rut::generate();
-        } while ($rut === $this->getRut($this->user1));
+        } while ($rut === Rut::make($user->rut_num . $user->rut_vd));
 
         $validator = Validator::make([
             'rut' => $rut->toFormattedString(),
