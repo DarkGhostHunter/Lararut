@@ -57,7 +57,7 @@ class ValidateRuleNumExistsTest extends TestCase
             'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::numExists('testing.users', 'rut_num')
-                ->where('name', 'John')
+                ->where('name', $user->name)
         ]);
 
         $this->assertFalse($validator->fails());

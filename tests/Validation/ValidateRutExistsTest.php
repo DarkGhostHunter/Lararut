@@ -2,9 +2,11 @@
 
 namespace Tests\Validation;
 
+use DarkGhostHunter\Lararut\ValidatesRut;
 use DarkGhostHunter\RutUtils\Rut;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Orchestra\Testbench\TestCase;
 use Tests\PreparesDatabase;
 use Tests\RegistersPackage;
@@ -26,7 +28,7 @@ class ValidateRutExistsTest extends TestCase
         $user = User::inRandomOrder()->first();
 
         $validator = Validator::make([
-            'rut' => Rut::make($user->rut_num . $user->rut_vd),
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString(),
         ], [
             'rut' => 'rut_exists:testing.users,rut_num,rut_vd'
         ]);
@@ -55,6 +57,31 @@ class ValidateRutExistsTest extends TestCase
         ]);
 
         $this->assertFalse($validator->fails());
+    }
+
+    public function testRutExistsLowercase()
+    {
+        $user = User::make()->forceFill([
+            'name' => 'Karen',
+            'email' => 'karen.doe@email.com',
+            'password' => '123456',
+            'rut_num' => '12435756',
+            'rut_vd' => 'k',
+        ]);
+
+        $user->save();
+
+        ValidatesRut::useLowercase();
+
+        $validator = Validator::make([
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
+        ], [
+            'rut' => 'rut_exists:testing.users'
+        ]);
+
+        $this->assertFalse($validator->fails());
+
+        ValidatesRut::useUppercase();
     }
 
     public function testRutExistsFailsWhenDoesntExists()

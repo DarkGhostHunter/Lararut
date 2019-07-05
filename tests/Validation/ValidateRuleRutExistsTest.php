@@ -3,6 +3,7 @@
 namespace Tests\Validation;
 
 use ArgumentCountError;
+use DarkGhostHunter\Lararut\ValidatesRut;
 use DarkGhostHunter\RutUtils\Rut;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Validator;
@@ -49,6 +50,31 @@ class ValidateRuleRutExistsTest extends TestCase
         $this->assertFalse($validator->fails());
     }
 
+    public function testValidationRuleRutExistsWithLowercase()
+    {
+        $user = User::make()->forceFill([
+            'name' => 'Karen',
+            'email' => 'karen.doe@email.com',
+            'password' => '123456',
+            'rut_num' => '12435756',
+            'rut_vd' => 'k',
+        ]);
+
+        $user->save();
+
+        ValidatesRut::useLowercase();
+
+        $validator = Validator::make([
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
+        ], [
+            'rut' => Rule::rutExists('testing.users')
+        ]);
+
+        $this->assertFalse($validator->fails());
+
+        ValidatesRut::useUppercase();
+    }
+
     public function testValidationRuleRutExistsWithWhere()
     {
         $user = User::inRandomOrder()->first();
@@ -57,7 +83,7 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
-                ->where('name', 'John')
+                ->where('name', $user->name)
         ]);
 
         $this->assertFalse($validator->fails());

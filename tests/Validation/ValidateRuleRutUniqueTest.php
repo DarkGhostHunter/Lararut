@@ -48,7 +48,7 @@ class ValidateRuleRutUniqueTest extends TestCase
             'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
-                ->ignore($this->user1->getKey())
+                ->ignore($user->getKey())
         ]);
 
         $this->assertFalse($validator->fails());
@@ -62,7 +62,7 @@ class ValidateRuleRutUniqueTest extends TestCase
             'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
-                ->ignoreModel($this->user1)
+                ->ignoreModel($user)
         ]);
 
         $this->assertFalse($validator->fails());
@@ -76,7 +76,7 @@ class ValidateRuleRutUniqueTest extends TestCase
             'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
-                ->ignore($this->user1)
+                ->ignore($user)
         ]);
 
         $this->assertFalse($validator->fails());
@@ -101,7 +101,7 @@ class ValidateRuleRutUniqueTest extends TestCase
             'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
-                ->where('name', 'John')
+                ->where('name', $user->name)
         ]);
 
         $this->assertTrue($validator->fails());
