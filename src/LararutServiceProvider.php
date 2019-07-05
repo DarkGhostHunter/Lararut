@@ -50,10 +50,6 @@ class LararutServiceProvider extends ServiceProvider
         Rule::macro('numUnique', function ($table, $column = 'NULL') {
             return new Rules\NumUnique($table, $column);
         });
-
-        Rule::macro('rutEqual', function (...$ruts) {
-            return new Rules\RutEqual(...$ruts);
-        });
     }
 
 }
