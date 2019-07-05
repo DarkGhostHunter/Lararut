@@ -9,6 +9,8 @@ This package integrates the [RutUtils](https://github.com/DarkGhostHunter/RutUti
 
 Additionally, it includes 4 new rules to validate RUT data conveniently.
 
+> **Important** This package does not validate if the RUT is from a real person, only if its valid. If you need that kind of functionality, you should let your application interact with the [pseudo-official API](https://portal.sidiv.registrocivil.cl/usuarios-portal/pages/DocumentRequestStatus.xhtml).
+
 ## Requirements
 
 - PHP 7.1.3+
@@ -26,94 +28,9 @@ composer require darkghosthunter/lararut
 
 ## Usage
 
-This package is just a Service Provider and Facade for RutUtils, but it also provides a Validator.
+This package is just a Service Provider for [RutUtils](https://github.com/DarkGhostHunter/RutUtils/), but it also provides a validators on top of that.
 
-### `Rut` Facade
-
-This package registers a Facade using the `Rut` class, so you can access all the methods available for the RutUtils package from just calling it.
-
-For example, you can use the Rut Facade to transform the `rut` attribute of an Eloquent Model (like the [User Model](https://github.com/laravel/laravel/tree/master/app/User.php)) into a flexible Rut instance.
-
-```php
-<?php
-namespace App;
-
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Rut;
-
-class User extends Authenticatable
-{
-   // ...
-   
-   /**
-    * Set the Rut attribute as a Rut instance 
-    * 
-    * @param $value
-    */
-   public function setRutAttribute($value)
-   {
-       $this->attributes['rut'] = Rut::make($value);
-   }
-   
-}
-```
-
-Or use it in your Controllers to, in this case, only filter RUTs which are valid.
-
-```php
-<?php
-
-namespace App\Http\Controllers\Auth;
-
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Rut;
-
-class DoesSomethingController extends Controller
-{
-    
-    /**
-     * Check the RUTs from the Request 
-     * 
-     * @param Request $request
-     * @return string
-     */
-    public function checkManyUsers(Request $request)
-    {
-        // Validate the input...
-        
-        $validRuts = Rut::filter($request->ruts);
-        
-        return 'Valid RUTs:' . implode(' ,', $validRuts) . '.';
-    }
-}
-```
-
-Since it's a Facade, you can also use it for [testing with Laravel](https://laravel.com/docs/5.7/mocking#mocking-facades).
-
-```php
-<?php
-
-namespace Tests\Feature;
-
-use Tests\TestCase;
-use Rut;
-
-class RegisterControllerTest extends TestCase
-{
-    public function testUserRegistersFamily()
-    {
-        Rut::shouldReceive('filter')
-            ->once()
-            ->with($this->isType('array'))
-            ->andReturn(true);
-        
-        // ...
-    }
-}
-```
-
-Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods.
+Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods to create, generate and validate RUTs.
 
 ### Helpers
 
@@ -127,8 +44,7 @@ Additionally, this includes `rut()` function to quickly create a RUT from scratc
 namespace App\Http\Listeners;
 
 use Illuminate\Auth\Events\Lockout;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\ProbablyForgotPassword;
+use App\Notifications\ProbablyForgotHisPassword;
 use App\Notifications\SupportReadyToHelp;
 use App\User;
 
@@ -146,11 +62,9 @@ class LogFailedAttempt
         // Get the RUT from the request input
         $rut = rut($event->request->input('rut'));
         
-        // If the user who tried exists in the database
+        // If the user who tried exists in the database, notify him.
         if ($user = User::where('rut_num', $rut->num)->first()) {
-            
-            // Help sending him a link to reset his password
-            $user->notify(new ProbablyForgotPassword());
+            $user->notify(new ProbablyForgotHisPassword(now()));
         }
     }
 }
@@ -158,11 +72,11 @@ class LogFailedAttempt
 
 ### Validation rules
 
-This package includes four rules, `is_rut`, `is_rut_strict`, `is_rut_equal` and `rut_exists`.
+This package includes handy rules to validate RUTs incoming from your frontend. Compared to prior versions, they're are more easy to use and understand.
 
-#### `is_rut`
+#### `rut`
 
-This checks if the RUT being passed is a valid RUT string. This automatically **cleans the RUT** from anything except numbers and verification digit, and then checks if the RUT is valid.
+This checks if the RUT being passed is a valid RUT string. This automatically **cleans the RUT** from anything except numbers and verification digit, and then checks if the resulting RUT is valid.
 
 ```php
 <?php
@@ -172,23 +86,31 @@ use Illuminate\Support\Facades\Validator;
 $validator = Validator::make([
     'rut' => '14328145-0'
 ], [
-    'rut' => 'required|is_rut'
+    'rut' => 'rut'
 ]);
 
-echo $validator->passes(); // true
+echo $validator->fails(); // false
 
 $validator = Validator::make([
     'rut' => '65.00!!!390XXXX2'
 ], [
-    'rut' => 'required|is_rut'
+    'rut' => 'rut'
 ]);
 
-echo $validator->passes(); // true
+echo $validator->fails(); // false
 ```
 
-This come handy in situations when the user presses a wrong button into an input, and allows you to center on the value itself rather than sanitizing the value.
+This come handy in situations when the user presses a wrong button into an input. Afterwards, you can use `Rut::cleanRut()` to receive a cleaned RUT from the input or other data sources.
 
-The rule also accepts an `array` of RUTs. In that case, `is_rut` will return true if all of the RUTs are valid, and false if at least one is invalid.
+```php
+<?php
+
+use \DarkGhostHunter\Lararut\Facades\Rut;
+
+$rut = Rut::cleanRut(request()->input('rut'));
+``` 
+
+The rule also accepts an `array` of RUTs. In that case, `rut` will return true if all of the RUTs are valid, and false if at least one is invalid. This may come in handy when a user is registering a lot of people into your application. 
 
 ```php
 <?php
@@ -198,7 +120,7 @@ use Illuminate\Support\Facades\Validator;
 $validator = Validator::make([
     'rut' => ['14328145-0', '12.343.580-K', 'thisisnotarut']
 ], [
-    'rut' => 'required|array|is_rut'
+    'rut' => 'rut'
 ]);
 
 echo $validator->fails(); // true
@@ -206,17 +128,17 @@ echo $validator->fails(); // true
 $validator = Validator::make([
     'rut' => ['14328145-0', '12.343.580-K', '20881410-9']
 ], [
-    'rut' => 'required|array|is_rut'
+    'rut' => 'rut'
 ]);
 
 echo $validator->fails(); // false
 ```
 
-#### `is_rut_strict` 
+#### `rut_strict` 
 
-This works the same as `is_rut`, but it will validate RUTs that are also using the correct RUT format: with thousand separator and a hyphen before the Validation Digit.
+This works the same as `rut`, but it will validate RUTs that are also using the correct RUT format: with thousand separator and a hyphen before the Validation Digit. This allows you to bypass any sanitization afterwards.
 
-Since it does not cleans the value, it will return false even if there is a misplaced character.
+Since it does not cleans the value, it will return `false` even if there is one misplaced character or an invalid one.
 
 ```php
 <?php
@@ -224,19 +146,43 @@ Since it does not cleans the value, it will return false even if there is a misp
 use Illuminate\Support\Facades\Validator;
 
 $validator = Validator::make([
-    'rut' => '14328145-0'
+    'rut' => '14.328.145-0'
 ], [
-    'rut' => 'required|is_rut_strict'
+    'rut' => 'required|rut_strict'
 ]);
 
 echo $validator->fails(); // false
+
+$validator = Validator::make([
+    'rut' => '1.4328.145-0'
+], [
+    'rut' => 'required|rut_strict'
+]);
+
+echo $validator->fails(); // true
 ```
 
-This rule also accepts an `array` of RUTs. In that case, `is_rut_strict` will return true if all of the RUTs are properly formatted and valid.
+This rule also accepts an `array` of RUTs. In that case, `rut_strict` will return true if all of the RUTs are properly formatted and valid.
 
-#### `is_rut_equal` 
+```php
+<?php
 
-This will check if the RUT is equal to another RUT, like for example, one inside your Database. Both will be cleaned before the validation procedure.
+use Illuminate\Support\Facades\Validator;
+
+$validator = Validator::make([
+    'rut' => ['1.4328.145-0', '12.343.580-K']
+], [
+    'rut.*' => 'required|rut_strict',
+]);
+
+echo $validator->fails(); // true
+```
+
+#### `rut_equal` 
+
+This will check if the RUT is equal to another RUT, like for example, the User's RUT or from another data resource. Both will be cleaned before the validation procedure.
+
+This is handy when, for example, you need to cross-reference the RUT against other external services or API.
  
 ```php
 <?php
@@ -244,16 +190,15 @@ This will check if the RUT is equal to another RUT, like for example, one inside
 use Illuminate\Support\Facades\Validator;
 
 $validator = Validator::make([
-    'rut' => '12.343.580-K'
+    'rut' => '12343580-K'
 ], [
-    'rut' => 'required|is_rut_equal:12343580K' 
+    'rut' => 'required|rut_equal:12343580K' 
 ]);
 
 echo $validator->fails(); // false
 ```
 
-It also accepts an `array` of RUTs, which saves you to do multiple `is_rut_equal`. In these cases, `is_rut_equal` will return true if all of the RUTs are valid and equal to each other.
-
+You can use an `array` of RUTs to compare, which saves you to do multiple `rut_equal`. In these cases, `rut_equal` will return true if all of the RUTs are valid and equal to each other.
 
 ```php
 <?php
@@ -269,12 +214,14 @@ $validator = Validator::make([
 echo $validator->fails(); // false
 ```
 
+> If you need to compare two or more RUTs in your input, you're better using the [`same` validation rule](https://laravel.com/docs/5.8/validation#rule-same). In case of confirming a RUT, use the [`confirmed` validation rule](https://laravel.com/docs/5.8/validation#rule-confirmed).
+
 #### `rut_exists` (Database)
 
 Instead of using Laravel's [exists](https://laravel.com/docs/master/validation#rule-exists), you can use `rut_exists` in case your database has separated columns for RUT Number and Verification Digit.
 
-For this to work you need to set the table to look for, the *RUT number* column and *RUT verification digit* column. Optionally, you can set the connection using dot notation.
- 
+For this to work you need to set the table to look for, the *RUT number* column and *RUT verification digit* column, otherwise the rule will *guess* the column names by the attribute key and appending `_num` and `_vd`, respectively.
+
 ```php
 <?php
 
@@ -283,22 +230,86 @@ use Illuminate\Support\Facades\Validator;
 $validator = Validator::make([
     'rut' => '12.343.580-K'
 ], [
-    'rut' => 'required|rut_exists:mysql.users,rut_num,rut_vd' 
+    'rut' => 'required|rut_exists:mysql.users,rut_num,rut_vd'
 ]);
 
-echo $validator->passes(); // false
+echo $validator->fails(); // true
 ```
 
-Since this also checks if the RUT is valid, it will return false if its not, or the RUT doesn't exists in the database.
+Since this also checks if the RUT is valid, it will return `false` if its not, or the RUT doesn't exists in the database.
 
 The rule will automatically set to uppercase the verification digit column, so it won't matter if in your column you manage `k` as lowercase.
 
 > Having separated columns for the RUT number and verification digits is usually the best approach to persist them. The number can be saved as 4 byte unsigned `int`, and the latter as a 1 byte `string` (1 character length).
 
+To customize the query, you can use the `Rule` class of Laravel, but using the method `rutExists`. Note that you can input the number and verification digit columns, or both, if you don't want to let the rule guess them, as it may incorrectly guess when using a wildcard.
+ 
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
+$validator = Validator::make([
+    'rut' => [
+        'rut_1' => '12.343.580-K',
+        'rut_2' => '13.871.792-5',
+    ],
+], [
+    'rut' => [
+        'required',
+        Rule::rutExists('mysql.users', 'rut_num', 'rut_vd')->where('account_id', 1),
+    ]
+]);
+
+echo $validator->fails(); // true
+```
+
+#### `num_exists` (Database)
+
+This validation rule checks if only the number of the RUT exists, without taking into account the verification digit. This is handy when the Database has an index in the number of the RUT, thus making this verification blazing fast.
+
+This rule automatically validates the RUT before doing the query.
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
+
+$validator = Validator::make([
+    'rut' => '12.343.580-K'
+], [
+    'rut' => 'required|num_exists:mysql.users,rut_num' 
+]);
+
+echo $validator->fails(); // true
+```
+
+You can customize the underlying query using the `numExists`. 
+ 
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
+$validator = Validator::make([
+    'rut' => '12.343.580-K',
+], [
+    'rut' => [
+        'required',
+        Rule::numExists('mysql.users', 'rut_num')->where('account_id', 1),
+    ]
+]);
+
+echo $validator->fails(); // true
+```
 
 #### `rut_unique` (Database)
 
-This works the same as the `rut_exists` rule, but instead of checking if the RUT exists in the Database, it will detect if it doesn't. Basically just like the Laravel `unique` rule works but at a very basic level.
+This works the same as the `rut_exists` rule, but instead of checking if the RUT exists in the Database, it will detect if it doesn't. This rule works just like the [Laravel's `unique` rule works](https://laravel.com/docs/5.8/validation#rule-unique).
+
+This rule automatically validates the RUT before doing the query.
 
 ```php
 <?php
@@ -311,8 +322,72 @@ $validator = Validator::make([
     'rut' => 'required|rut_unique:mysql.users,rut_num,rut_vd' 
 ]);
 
-echo $validator->passes(); // false
+echo $validator->fails(); // true
 ```
+
+You can also exclude a certain ID or records from the Unique validation. For this, you need to use the `Rule` class.
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
+$validator = Validator::make([
+    'rut' => '12.343.580-K',
+], [
+    'rut' => [
+        'required',
+        Rule::rutUnique('mysql.users', 'rut_num')->ignore(request()->user()->id),
+    ]
+]);
+
+echo $validator->fails(); // true
+```
+
+> **[Warning]** **You should never pass any user controlled request input into the ignore method. Instead, you should only pass a system generated unique ID such as an auto-incrementing ID or UUID from an Eloquent model instance. Otherwise, your application will be vulnerable to an SQL injection attack.**
+
+#### `num_unique` (Database)
+
+This rule will check only if the **number** of the RUT doesn't exists already in the database, which is useful for Databases with an index solely on the number of the RUT. This rule also matches the [Laravel's `unique` rule works](https://laravel.com/docs/5.8/validation#rule-unique).
+
+This rule automatically validates the RUT before doing the query.
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
+
+$validator = Validator::make([
+    'rut' => '12.343.580-K'
+], [
+    'rut' => 'required|num_unique:mysql.users,rut_num' 
+]);
+
+echo $validator->fails(); // true
+```
+
+You can also exclude a certain ID or records from the Unique validation. For this, you need to use the `Rule` class.
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+
+$validator = Validator::make([
+    'rut' => '12.343.580-K',
+], [
+    'rut' => [
+        'required',
+        Rule::numUnique('mysql.users')->ignore(request()->user()->id),
+    ]
+]);
+
+echo $validator->fails(); // true
+```
+
+> **[Warning]** **You should never pass any user controlled request input into the ignore method. Instead, you should only pass a system generated unique ID such as an auto-incrementing ID or UUID from an Eloquent model instance. Otherwise, your application will be vulnerable to an SQL injection attack.**
 
 ## License
 

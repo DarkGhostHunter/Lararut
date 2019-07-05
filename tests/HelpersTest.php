@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use DarkGhostHunter\Lararut\Facades\Rut;
+use DarkGhostHunter\RutUtils\Rut;
 use Orchestra\Testbench\TestCase;
 
 class HelpersTest extends TestCase
@@ -14,11 +14,6 @@ class HelpersTest extends TestCase
     protected function getPackageProviders($app)
     {
         return ['DarkGhostHunter\Lararut\LararutServiceProvider'];
-    }
-
-    protected function getPackageAliases($app)
-    {
-        return ['Rut' => 'DarkGhostHunter\Lararut\Facades\Rut'];
     }
 
     protected function setUp() : void
