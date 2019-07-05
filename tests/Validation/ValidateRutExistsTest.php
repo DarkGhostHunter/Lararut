@@ -23,7 +23,7 @@ class ValidateRutExistsTest extends TestCase
 
     public function testRutExists()
     {
-        $user = User::first();
+        $user = User::inRandomOrder()->first();
 
         $validator = Validator::make([
             'rut' => Rut::make($user->rut_num . $user->rut_vd),
