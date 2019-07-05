@@ -26,10 +26,4 @@ class ServiceProviderTest extends TestCase
     {
         $this->assertInstanceOf(Rut::class, $this->app->make(Rut::class));
     }
-
-    public function testRegistersFacade()
-    {
-        $this->assertInstanceOf(Rut::class, \Rut::make('247009094'));
-        $this->assertInstanceOf(Rut::class, \Rut::getFacadeRoot());
-    }
 }
