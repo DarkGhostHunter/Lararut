@@ -91,13 +91,7 @@ class ValidatesRut
             return false;
         }
 
-        foreach ($parameters as $rut) {
-            if (! RutHelper::validate($rut)) {
-                return false;
-            }
-        }
-
-        return RutHelper::validate($value) && RutHelper::isEqual($value, $parameters[0]);
+        return RutHelper::validate([$value] + $parameters) && RutHelper::isEqual($value, $parameters[0]);
     }
 
 
