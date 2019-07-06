@@ -24,8 +24,10 @@ class ValidateNumExistsTest extends TestCase
 
     public function testNumExists()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString(),
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => 'num_exists:testing.users,rut_num'
         ]);
@@ -35,8 +37,10 @@ class ValidateNumExistsTest extends TestCase
 
     public function testNumExistsWithColumnGuessing()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)->toFormattedString(),
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => 'num_exists:testing.users'
         ]);
@@ -46,9 +50,11 @@ class ValidateNumExistsTest extends TestCase
 
     public function testNumExistsFailsWhenDoesntExists()
     {
+        $user = User::inRandomOrder()->first();
+
         do {
             $rut = Rut::generate();
-        } while ($rut === $this->getRut($this->user1));
+        } while ($rut === Rut::make($user->rut_num . $user->rut_vd));
 
         $validator = Validator::make([
             'rut' => $rut->toFormattedString()
@@ -80,8 +86,10 @@ class ValidateNumExistsTest extends TestCase
 
     public function testNumExistsFailsWhenInvalidColumn()
     {
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => 'num_exists:testing.users,invalid_column'
         ]);
@@ -93,8 +101,10 @@ class ValidateNumExistsTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
+        $user = User::inRandomOrder()->first();
+
         $validator = Validator::make([
-            'rut' => $this->getRut($this->user1)
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
         ], [
             'rut' => 'num_exists'
         ]);

@@ -2,6 +2,10 @@
 
 namespace DarkGhostHunter\Lararut;
 
+use DarkGhostHunter\Lararut\Rules\NumExists;
+use DarkGhostHunter\Lararut\Rules\NumUnique;
+use DarkGhostHunter\Lararut\Rules\RutExists;
+use DarkGhostHunter\Lararut\Rules\RutUnique;
 use DarkGhostHunter\RutUtils\Rut;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rule;
@@ -35,6 +39,16 @@ class LararutServiceProvider extends ServiceProvider
             }
         });
 
+        $this->macroRules();
+    }
+
+    /**
+     * Register the macro for the Rule class
+     *
+     * @return void
+     */
+    protected function macroRules()
+    {
         Rule::macro('rutExists', function ($table, $numColumn = 'NULL', $rutColumn = 'NULL') {
             return new Rules\RutExists($table, $numColumn, $rutColumn);
         });

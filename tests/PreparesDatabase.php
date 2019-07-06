@@ -8,12 +8,6 @@ use Illuminate\Foundation\Auth\User;
 
 trait PreparesDatabase
 {
-    /** @var User */
-    protected $user1;
-
-    /** @var User */
-    protected $user2;
-
     protected function prepareDatabase()
     {
         $this->loadLaravelMigrations();
@@ -24,40 +18,35 @@ trait PreparesDatabase
         $db->connection()
             ->getSchemaBuilder()
             ->table('users', function (Blueprint $table) {
-                $table->bigInteger('rut_num')->nullable();
+                $table->unsignedBigInteger('rut_num')->nullable();
                 $table->string('rut_vd')->nullable();
             });
 
-        $this->user1 = User::make()->forceFill([
+        User::make()->forceFill([
+            'id' => 1,
             'name' => 'John',
             'email' => 'john.doe@email.com',
             'password' => '123456',
             'rut_num' => ($rut = Rut::generate())->num,
-            'rut_vd' => strtolower($rut->vd),
-        ]);
+            'rut_vd' => strtoupper($rut->vd),
+        ])->save();
 
-        $this->user1->save();
-
-        $this->user2 = User::make()->forceFill([
+        User::make()->forceFill([
+            'id' => 2,
             'name' => 'Michael',
             'email' => 'michael.doe@email.com',
             'password' => '123456',
             'rut_num' => ($rut = Rut::generate())->num,
-            'rut_vd' => strtolower($rut->vd),
-        ]);
+            'rut_vd' => strtoupper($rut->vd),
+        ])->save();
 
-        $this->user2->save();
-    }
-
-    /**
-     * Returns a testing user RUT
-     *
-     * @param \Illuminate\Foundation\Auth\User $user
-     * @return array|\DarkGhostHunter\RutUtils\Rut
-     * @throws \DarkGhostHunter\RutUtils\Exceptions\InvalidRutException
-     */
-    protected function getRut(User $user)
-    {
-        return Rut::make($user->rut_num . $user->rut_vd);
+        User::make()->forceFill([
+            'id' => 3,
+            'name' => 'Carmen',
+            'email' => 'carmen.doe@email.com',
+            'password' => '123456',
+            'rut_num' => 20490006,
+            'rut_vd' => strtoupper('k'),
+        ])->save();
     }
 }

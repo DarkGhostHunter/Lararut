@@ -74,6 +74,8 @@ class LogFailedAttempt
 
 This package includes handy rules to validate RUTs incoming from your frontend. Compared to prior versions, they're are more easy to use and understand.
 
+> Make sure you're storing your Verification Digit as uppercase or lowercase, **no both**. By default the database rules `rut_exists` and `rut_unique` use uppercase `K`. If you need to change for lowercase `k`, use the `ValidatesRut::useLowercase()` static method in your `AppServiceProvider@boot`.
+
 #### `rut`
 
 This checks if the RUT being passed is a valid RUT string. This automatically **cleans the RUT** from anything except numbers and verification digit, and then checks if the resulting RUT is valid.

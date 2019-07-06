@@ -10,6 +10,43 @@ use Illuminate\Support\Arr;
 class ValidatesRut
 {
     /**
+     * If the database rules should use lowercase on "K" verification digit
+     *
+     * @var bool
+     */
+    protected static $lowercase = false;
+
+    /**
+     * Use lowercase "k" for database rules
+     *
+     * @return void
+     */
+    public static function useLowercase()
+    {
+        self::$lowercase = true;
+    }
+
+    /**
+     * Use uppercase "K" for database rules
+     *
+     * @return void
+     */
+    public static function useUppercase()
+    {
+        self::$lowercase = false;
+    }
+
+    /**
+     * Get if the database rules are using lowercase or uppercase
+     *
+     * @return bool
+     */
+    public static function getLowercase()
+    {
+        return self::$lowercase;
+    }
+    
+    /**
      * Returns if the RUTs are valid
      *
      * @param string $attribute
@@ -54,13 +91,7 @@ class ValidatesRut
             return false;
         }
 
-        foreach ($parameters as $rut) {
-            if (! RutHelper::validate($rut)) {
-                return false;
-            }
-        }
-
-        return RutHelper::validate($value) && RutHelper::isEqual($value, $parameters[0]);
+        return RutHelper::validate([$value] + $parameters) && RutHelper::isEqual($value, $parameters[0]);
     }
 
 
@@ -141,7 +172,7 @@ class ValidatesRut
         // parameters array and rearrange it so the "validateExists" rule can digest
         // the rule parameters. We don't have to reinvent the wheel, we just use it.
         $parameters[] = Arr::pull($parameters, 2);
-        $parameters[] = $rut->vd;
+        $parameters[] = self::$lowercase ? strtolower($rut->vd) : strtoupper($rut->vd);
 
         return $validator->validateExists($attribute, $rut->num, $parameters);
     }
@@ -168,7 +199,7 @@ class ValidatesRut
         // We will add the second column as an extra "where" clause, and then take the
         // parameters array and rearrange it so the "validateUnique" rule can digest
         // the rule parameters. We don't have to reinvent the wheel, we just use it.
-        $extra = [Arr::pull($parameters, 2), $rut->vd];
+        $extra = [Arr::pull($parameters, 2), self::$lowercase ? strtolower($rut->vd) : strtoupper($rut->vd)];
         $parameters = array_merge(array_pad($parameters, 4, null), $extra);
 
         // If the parameters doesn't include the columns for the number and verification
