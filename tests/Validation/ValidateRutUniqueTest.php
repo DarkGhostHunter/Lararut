@@ -4,9 +4,9 @@ namespace Tests\Validation;
 
 use DarkGhostHunter\Lararut\ValidatesRut;
 use DarkGhostHunter\RutUtils\Rut;
+use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Validator;
-use InvalidArgumentException;
 use Orchestra\Testbench\TestCase;
 use Tests\PreparesDatabase;
 use Tests\RegistersPackage;
@@ -26,7 +26,7 @@ class ValidateRutUniqueTest extends TestCase
     public function testUnique()
     {
         do {
-            $rut = Rut::generate();
+            $rut = RutGenerator::make()->generate();
         } while (User::where(['rut_num', $rut->num, 'rut_vd', $rut->vd])->exists());
 
         $validator = Validator::make([
@@ -41,7 +41,7 @@ class ValidateRutUniqueTest extends TestCase
     public function testUniqueWithColumnGuessing()
     {
         do {
-            $rut = Rut::generate();
+            $rut = RutGenerator::make()->generate();
         } while (User::where(['rut_num', $rut->num, 'rut_vd', $rut->vd])->exists());
 
         $validator = Validator::make([

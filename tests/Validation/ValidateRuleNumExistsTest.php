@@ -4,6 +4,7 @@ namespace Tests\Validation;
 
 use ArgumentCountError;
 use DarkGhostHunter\RutUtils\Rut;
+use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -102,7 +103,7 @@ class ValidateRuleNumExistsTest extends TestCase
         $user = User::inRandomOrder()->first();
 
         do {
-            $rut = Rut::generate();
+            $rut = RutGenerator::make()->generate();
         } while ($rut === Rut::make($user->rut_num . $user->rut_vd));
 
         $validator = Validator::make([
@@ -119,7 +120,7 @@ class ValidateRuleNumExistsTest extends TestCase
         $user = User::inRandomOrder()->first();
 
         $validator = Validator::make([
-            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
+            'rut' => (new Rut($user->rut_num, $user->rut_vd))->toFormattedString()
         ], [
             'rut' => Rule::numExists('testing.users', 'absent_num')
         ]);

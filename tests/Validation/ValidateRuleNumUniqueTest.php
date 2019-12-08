@@ -4,6 +4,7 @@ namespace Tests\Validation;
 
 use ArgumentCountError;
 use DarkGhostHunter\RutUtils\Rut;
+use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -28,8 +29,8 @@ class ValidateRuleNumUniqueTest extends TestCase
         $user = User::inRandomOrder()->first();
 
         do {
-            $rut = Rut::generate();
-        } while ($rut === Rut::make($user->rut_num . $user->rut_vd));
+            $rut = RutGenerator::make()->generate();
+        } while ($rut === (new Rut($user->rut_num, $user->rut_vd)));
 
         $validator = Validator::make([
             'rut' => $rut->toFormattedString()
