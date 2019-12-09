@@ -18,9 +18,11 @@ class ValidateNumExistsTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->afterApplicationCreated(function () {
+            $this->prepareDatabase();
+        });
 
-        $this->prepareDatabase();
+        parent::setUp();
     }
 
     public function testNumExists()

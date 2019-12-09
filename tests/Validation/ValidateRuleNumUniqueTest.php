@@ -12,6 +12,7 @@ use Orchestra\Testbench\TestCase;
 use Tests\PreparesDatabase;
 use Tests\RegistersPackage;
 
+
 class ValidateRuleNumUniqueTest extends TestCase
 {
     use RegistersPackage,
@@ -19,18 +20,18 @@ class ValidateRuleNumUniqueTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->afterApplicationCreated(function () {
+            $this->prepareDatabase();
+        });
 
-        $this->prepareDatabase();
+        parent::setUp();
     }
 
     public function testValidationRuleNumUnique()
     {
-        $user = User::inRandomOrder()->first();
-
         do {
             $rut = RutGenerator::make()->generate();
-        } while ($rut === (new Rut($user->rut_num, $user->rut_vd)));
+        } while (User::where('rut_num', $rut->num)->exists());
 
         $validator = Validator::make([
             'rut' => $rut->toFormattedString()

@@ -7,7 +7,9 @@
 
 This package integrates the [RutUtils](https://github.com/DarkGhostHunter/RutUtils/) package, allowing manipulation of RUTs in your PHP project, with Laravel.
 
-Additionally, it includes 4 new rules to validate RUT data conveniently.
+Additionally, it includes 6 new rules to validate RUT data conveniently.
+
+Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods to create, generate and validate RUTs.
 
 > **Important** This package does not validate if the RUT is from a real person, only if its valid. If you need that kind of functionality, you should let your application interact with the [pseudo-official API](https://portal.sidiv.registrocivil.cl/usuarios-portal/pages/DocumentRequestStatus.xhtml).
 
@@ -26,18 +28,9 @@ Fire up Composer and require it into your project:
 composer require darkghosthunter/lararut
 ```
 
-## Usage
+## Helpers
 
-This package offers some utilities using [RutUtils](https://github.com/DarkGhostHunter/RutUtils/):
-
-* Validation Rules
-* Type-hinting in controller methods
-
-Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods to create, generate and validate RUTs.
-
-### Helpers
-
-This package also [includes the `rut()` global helper](https://github.com/DarkGhostHunter/RutUtils/#global-helper) file, which allows you to create a Rut instance anywhere in your code.
+This package [includes the `rut()` global helper](https://github.com/DarkGhostHunter/RutUtils/#global-helper) file, which allows you to create a Rut instance anywhere in your code, or a Rut Generator if you don't issue any parameter.
 
 ```php
 <?php
@@ -70,13 +63,13 @@ class LogFailedAttempt
 }
 ```
 
-### Validation rules
+## Validation rules
 
 This package includes handy rules to validate RUTs incoming from your frontend. Compared to prior versions, they're are more easy to use and understand.
 
 > Database rules will automatically normalize `K` verification _digit_ to search in the database.
 
-#### `rut`
+### `rut`
 
 This checks if the RUT being passed is a valid RUT string. This automatically **cleans the RUT** from anything except numbers and verification digit, and then checks if the resulting RUT is valid.
 
@@ -102,7 +95,7 @@ $validator = Validator::make([
 echo $validator->fails(); // false
 ```
 
-This may come handy in situations when the user presses a wrong button into an input. Afterwards, you can use `Rut::make()` to create a new Rut instance from that input.
+This may come handy in situations when the user presses a wrong button into an RUT input, so no need to ask the user to add hyphen or dots. Afterwards, you can use `Rut::make()` to create a new Rut instance from that input.
 
 ```php
 <?php
@@ -112,7 +105,7 @@ use \DarkGhostHunter\RutUtils\Rut;
 $rut = Rut::make(request()->input('rut'));
 ``` 
 
-The rule also accepts an `array` of RUTs. In that case, `rut` will return true if all of the RUTs are valid, and false if at least one is invalid. This may come in handy when a user is registering a lot of people into your application. 
+The rule also accepts an `array` of RUTs. In that case, `rut` will return true if all of the RUTs are valid, and false if at least one is invalid. This may come in handy when a user is registering a lot of people into your application.
 
 ```php
 <?php
@@ -136,7 +129,7 @@ $validator = Validator::make([
 echo $validator->fails(); // false
 ```
 
-#### `rut_strict` 
+### `rut_strict`
 
 This works the same as `rut`, but it will validate RUTs that are also using the correct RUT format: with thousand separator and a hyphen before the Validation Digit. This allows you to bypass any sanitization afterwards.
 
@@ -180,9 +173,9 @@ $validator = Validator::make([
 echo $validator->fails(); // true
 ```
 
-#### `rut_equal` 
+### `rut_equal` 
 
-This will check if the RUT is equal to another RUT, like for example, the User's RUT or from another data resource. Both will be cleaned before the validation procedure.
+This will check if the RUT is equal to another RUT, like for example, the authenticated User's RUT or from another data resource. Both will be cleaned before the validation procedure.
 
 This is handy when, for example, you need to cross-reference the RUT against other external services or API.
  
@@ -218,9 +211,9 @@ echo $validator->fails(); // false
 
 > If you need to compare two or more RUTs in your input, you're better using the [`same` validation rule](https://laravel.com/docs/6.x/validation#rule-same). In case of confirming a RUT, use the [`confirmed` validation rule](https://laravel.com/docs/6.x/validation#rule-confirmed).
 
-#### `rut_exists` (Database)
+### `rut_exists` (Database)
 
-Instead of using Laravel's [exists](https://laravel.com/docs/master/validation#rule-exists), you can use `rut_exists` in case your database has separated columns for RUT Number and Verification Digit.
+Instead of using Laravel's [exists](https://laravel.com/docs/master/validation#rule-exists), you can use `rut_exists` in case your database has separated columns for the RUT Number and Verification Digit.
 
 For this to work you need to set the table to look for, the *RUT number* column and *RUT verification digit* column, otherwise the rule will *guess* the column names by the attribute key and appending `_num` and `_vd`, respectively.
 
@@ -238,7 +231,7 @@ $validator = Validator::make([
 echo $validator->fails(); // true
 ```
 
-Since this also checks if the RUT is valid, it will return `false` if its not, or the RUT doesn't exists in the database.
+Since this also checks if the RUT is valid (not strict), it will return `false` if its not, or the RUT doesn't exists in the database.
 
 The rule will automatically set to uppercase the verification digit column, so it won't matter if in your column you manage `k` as lowercase.
 
@@ -267,7 +260,7 @@ $validator = Validator::make([
 echo $validator->fails(); // true
 ```
 
-#### `num_exists` (Database)
+### `num_exists` (Database)
 
 This validation rule checks if only the number of the RUT exists, without taking into account the verification digit. This is handy when the Database has an index in the number of the RUT, thus making this verification blazing fast.
 
@@ -307,9 +300,9 @@ $validator = Validator::make([
 echo $validator->fails(); // true
 ```
 
-#### `rut_unique` (Database)
+### `rut_unique` (Database)
 
-This works the same as the `rut_exists` rule, but instead of checking if the RUT exists in the Database, it will detect if it doesn't. This rule works just like the [Laravel's `unique` rule works](https://laravel.com/docs/5.8/validation#rule-unique).
+This works the same as the `rut_exists` rule, but instead of checking if the RUT exists in the Database, it will detect if it doesn't. This rule works just like the [Laravel's `unique` rule works](https://laravel.com/docs/6.x/validation#rule-unique).
 
 This rule automatically validates the RUT before doing the query.
 
@@ -340,7 +333,7 @@ $validator = Validator::make([
 ], [
     'rut' => [
         'required',
-        Rule::rutUnique('mysql.users', 'rut_num')->ignore(request()->user()->id),
+        Rule::rutUnique('mysql.users', 'rut_num')->ignore(request()->user()),
     ]
 ]);
 
@@ -349,9 +342,9 @@ echo $validator->fails(); // true
 
 > **[Warning]** **You should never pass any user controlled request input into the ignore method. Instead, you should only pass a system generated unique ID such as an auto-incrementing ID or UUID from an Eloquent model instance. Otherwise, your application will be vulnerable to an SQL injection attack.**
 
-#### `num_unique` (Database)
+### `num_unique` (Database)
 
-This rule will check only if the **number** of the RUT doesn't exists already in the database, which is useful for Databases with an index solely on the number of the RUT. This rule also matches the [Laravel's `unique` rule works](https://laravel.com/docs/5.8/validation#rule-unique).
+This rule will check only if the **number** of the RUT doesn't exists already in the database, which is useful for Databases with an index solely on the number of the RUT. This rule also matches the [Laravel's `unique` rule works](https://laravel.com/docs/6.x/validation#rule-unique).
 
 This rule automatically validates the RUT before doing the query.
 
@@ -390,6 +383,37 @@ echo $validator->fails(); // true
 ```
 
 > **[Warning]** **You should never pass any user controlled request input into the ignore method. Instead, you should only pass a system generated unique ID such as an auto-incrementing ID or UUID from an Eloquent model instance. Otherwise, your application will be vulnerable to an SQL injection attack.**
+
+## Route Model Binding
+
+In your application you may have users identified by their ID, but also by their RUT. It's recommended to override the `resolveRouteBinding()` method of your Eloquent Model to look for its RUT, depending on how it's saved in the database.
+
+```php
+/**
+ * Retrieve the model for a bound value.
+ *
+ * @param  mixed  $value
+ * @return \Illuminate\Database\Eloquent\Model|null
+ */
+public function resolveRouteBinding($value)
+{
+    return $this->where('rut_num', rut($value)->num)->firstOrFail();
+}
+```
+
+There are also [other alternatives for Route Model Binding](https://laravel.com/docs/6.x/routing#route-model-binding).
+
+## Database Blueprint helper
+
+If you're creating your database from the ground up, you don't need to manually create the RUT columns. Just use the `rut()` helper in the Blueprint:
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    $table->rut();
+});
+```
+
+If you plan to use the Number as an index, which may speed up queries to look for RUTs, you can just index the Number column by fluently adding `primary()`, `index()` or `unique()` depending on your data needs. This is because it has more sense to index the Number rather than the whole RUT, and these shouldn't be nullable.
 
 ## License
 

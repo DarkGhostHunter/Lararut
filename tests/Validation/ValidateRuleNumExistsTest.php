@@ -12,6 +12,7 @@ use Orchestra\Testbench\TestCase;
 use Tests\PreparesDatabase;
 use Tests\RegistersPackage;
 
+
 class ValidateRuleNumExistsTest extends TestCase
 {
     use RegistersPackage,
@@ -19,9 +20,11 @@ class ValidateRuleNumExistsTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->afterApplicationCreated(function () {
+            $this->prepareDatabase();
+        });
 
-        $this->prepareDatabase();
+        parent::setUp();
     }
 
     public function testValidationRuleRutExists()
@@ -42,7 +45,7 @@ class ValidateRuleNumExistsTest extends TestCase
         $user = User::inRandomOrder()->first();
 
         $validator = Validator::make([
-            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
+            'rut' => Rut::make($user->rut_num, $user->rut_vd)->toFormattedString()
         ], [
             'rut' => Rule::numExists('testing.users')
         ]);

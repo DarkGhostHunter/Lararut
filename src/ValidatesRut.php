@@ -131,7 +131,7 @@ class ValidatesRut
         $query = DB::connection($connection)
             ->table($table)
             ->where($num_column, $rut->num)
-            ->where($vd_column, $rut->vd);
+            ->whereRaw("UPPER(\"$vd_column\") = ?", strtoupper($rut->vd));
 
         return $this->addExtraWheres($query, $wheres)->exists();
     }
@@ -162,13 +162,17 @@ class ValidatesRut
         $query = DB::connection($connection)
             ->table($table)
             ->where($num_column, $rut->num)
-            ->where($vd_column, $rut->vd)
-            ->when($wheres[1], function($query) use ($wheres) {
+            ->whereRaw("UPPER(\"$vd_column\") = ?", strtoupper($rut->vd))
+            ->when($wheres[0] ?? null, function($query) use (&$wheres) {
                 /** @var \Illuminate\Database\Query\Builder $query */
-                $query->where($wheres[0] ?? 'id', '!=', $wheres[1]);
+                $query->where($wheres[1] ?? 'id', '!=', $wheres[0]);
             });
 
-        return $this->addExtraWheres($query, $wheres)->exists();
+        if (count($wheres) > 2) {
+            unset($wheres[0], $wheres[1]);
+        }
+
+        return $this->addExtraWheres($query, $wheres)->doesntExist();
     }
 
     /**
@@ -181,10 +185,8 @@ class ValidatesRut
      */
     protected function parseParameters(array $parameters, int $sliceOffset = 0, int $pad = 0)
     {
-        $iterations = $sliceOffset ?? count($parameters);
-
-        for ($i = 0; $i < $iterations; ++$i) {
-            $parameters[$i] = strtolower($parameters[$i]) === 'null' ? null : $parameters[$i];
+        foreach ($parameters as $key => $value) {
+            $parameters[$key] = strtolower($value) === 'null' ? null : $parameters[$key];
         }
 
         if ($pad) {

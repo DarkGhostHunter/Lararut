@@ -20,7 +20,8 @@
     "darkghosthunter/rut-utils": "2.*"
   },
   "require-dev": {
-    "orchestra/testbench": "4.*"
+    "orchestra/testbench": "4.*",
+    "doctrine/dbal" : "2.*"
   },
   "autoload": {
     "psr-4": {

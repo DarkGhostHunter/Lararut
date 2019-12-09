@@ -13,6 +13,7 @@ use Orchestra\Testbench\TestCase;
 use Tests\PreparesDatabase;
 use Tests\RegistersPackage;
 
+
 class ValidateRuleRutExistsTest extends TestCase
 {
     use RegistersPackage,
@@ -20,9 +21,11 @@ class ValidateRuleRutExistsTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->afterApplicationCreated(function () {
+            $this->prepareDatabase();
+        });
 
-        $this->prepareDatabase();
+        parent::setUp();
     }
 
     public function testValidationRuleRutExists()
@@ -49,31 +52,6 @@ class ValidateRuleRutExistsTest extends TestCase
         ]);
 
         $this->assertFalse($validator->fails());
-    }
-
-    public function testValidationRuleRutExistsWithLowercase()
-    {
-        $user = User::make()->forceFill([
-            'name' => 'Karen',
-            'email' => 'karen.doe@email.com',
-            'password' => '123456',
-            'rut_num' => '12435756',
-            'rut_vd' => 'k',
-        ]);
-
-        $user->save();
-
-        ValidatesRut::useLowercase();
-
-        $validator = Validator::make([
-            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
-        ], [
-            'rut' => Rule::rutExists('testing.users')
-        ]);
-
-        $this->assertFalse($validator->fails());
-
-        ValidatesRut::useUppercase();
     }
 
     public function testValidationRuleRutExistsWithWhere()

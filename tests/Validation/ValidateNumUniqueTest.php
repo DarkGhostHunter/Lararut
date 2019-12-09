@@ -10,6 +10,7 @@ use Orchestra\Testbench\TestCase;
 use Tests\PreparesDatabase;
 use Tests\RegistersPackage;
 
+
 class ValidateNumUniqueTest extends TestCase
 {
     use RegistersPackage,
@@ -17,9 +18,11 @@ class ValidateNumUniqueTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->afterApplicationCreated(function () {
+            $this->prepareDatabase();
+        });
 
-        $this->prepareDatabase();
+        parent::setUp();
     }
 
     public function testUnique()

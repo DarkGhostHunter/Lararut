@@ -2,14 +2,9 @@
 
 namespace DarkGhostHunter\Lararut;
 
-use DarkGhostHunter\Lararut\Rules\NumExists;
-use DarkGhostHunter\Lararut\Rules\NumUnique;
-use DarkGhostHunter\Lararut\Rules\RutExists;
-use DarkGhostHunter\Lararut\Rules\RutUnique;
-use DarkGhostHunter\RutUtils\Rut;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rule;
-use DarkGhostHunter\Lararut\ValidatesRut;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Schema\Blueprint;
 
 class LararutServiceProvider extends ServiceProvider
 {
@@ -59,6 +54,7 @@ class LararutServiceProvider extends ServiceProvider
         });
 
         $this->macroRules();
+        $this->macroBlueprint();
     }
 
     /**
@@ -85,4 +81,13 @@ class LararutServiceProvider extends ServiceProvider
         });
     }
 
+    protected function macroBlueprint()
+    {
+        Blueprint::macro('rut', function () {
+            $num = $this->unsignedInteger('rut_num');
+            $this->char('rut_vd', 1);
+
+            return $num;
+        });
+    }
 }
