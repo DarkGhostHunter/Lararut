@@ -19,18 +19,15 @@
         <whitelist addUncoveredFilesFromWhitelist="false">
             <directory suffix=".php">src</directory>
             <exclude>
-                <directory>vendor</directory>
-                <directory>database</directory>
-                <directory>config</directory>
-                <directory>tests</directory>
+                <file>src/LararutServiceProvider.php</file>
             </exclude>
         </whitelist>
     </filter>
 
     <php>
-        <env name="DB_CONNECTION" value="testing"/>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_KEY" value="AckfSECXIvnK5r28GVIWUAxmbBSjTsmF"/>
+        <env name="DB_CONNECTION" value="testing"/>
     </php>
 
     <logging>

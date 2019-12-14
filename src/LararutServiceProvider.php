@@ -2,14 +2,9 @@
 
 namespace DarkGhostHunter\Lararut;
 
-use DarkGhostHunter\Lararut\Rules\NumExists;
-use DarkGhostHunter\Lararut\Rules\NumUnique;
-use DarkGhostHunter\Lararut\Rules\RutExists;
-use DarkGhostHunter\Lararut\Rules\RutUnique;
-use DarkGhostHunter\RutUtils\Rut;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rule;
-use DarkGhostHunter\Lararut\ValidatesRut;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Schema\Blueprint;
 
 class LararutServiceProvider extends ServiceProvider
 {
@@ -20,26 +15,46 @@ class LararutServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Rut::class);
-
         $this->app->resolving('validator', function ($validator, $app) {
             /** @var \Illuminate\Contracts\Validation\Factory $validator */
             $rules = [
-                'rut'           => 'DarkGhostHunter\Lararut\ValidatesRut@validateRut',
-                'rut_strict'    => 'DarkGhostHunter\Lararut\ValidatesRut@validateRutStrict',
-                'rut_equal'     => 'DarkGhostHunter\Lararut\ValidatesRut@validateRutEqual',
-                'rut_exists'    => 'DarkGhostHunter\Lararut\ValidatesRut@validateRutExists',
-                'rut_unique'    => 'DarkGhostHunter\Lararut\ValidatesRut@validateRutUnique',
-                'num_exists'    => 'DarkGhostHunter\Lararut\ValidatesRut@validateNumExists',
-                'num_unique'    => 'DarkGhostHunter\Lararut\ValidatesRut@validateNumUnique',
+                'rut'        => [
+                    'DarkGhostHunter\Lararut\ValidatesRut@validateRut',
+                    'lararut::validation.rut',
+                ],
+                'rut_strict' => [
+                    'DarkGhostHunter\Lararut\ValidatesRut@validateRutStrict',
+                    'lararut::validation.strict',
+                ],
+                'rut_equal'  => [
+                    'DarkGhostHunter\Lararut\ValidatesRut@validateRutEqual',
+                    'lararut::validation.equal',
+                ],
+                'rut_exists' => [
+                    'DarkGhostHunter\Lararut\ValidatesRut@validateRutExists',
+                    'lararut::validation.exists',
+                ],
+                'rut_unique' => [
+                    'DarkGhostHunter\Lararut\ValidatesRut@validateRutUnique',
+                    'lararut::validation.unique',
+                ],
+                'num_exists' => [
+                    'DarkGhostHunter\Lararut\ValidatesRut@validateNumExists',
+                    'lararut::validation.num_exists',
+                ],
+                'num_unique' => [
+                    'DarkGhostHunter\Lararut\ValidatesRut@validateNumUnique',
+                    'lararut::validation.num_unique',
+                ],
             ];
 
             foreach ($rules as $key => $rule) {
-                $validator->extend($key, $rule);
+                $validator->extend($key, ...$rule);
             }
         });
 
         $this->macroRules();
+        $this->macroBlueprint();
     }
 
     /**
@@ -66,4 +81,13 @@ class LararutServiceProvider extends ServiceProvider
         });
     }
 
+    protected function macroBlueprint()
+    {
+        Blueprint::macro('rut', function () {
+            $num = $this->unsignedInteger('rut_num');
+            $this->char('rut_vd', 1);
+
+            return $num;
+        });
+    }
 }

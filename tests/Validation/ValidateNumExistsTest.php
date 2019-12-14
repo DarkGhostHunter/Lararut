@@ -3,6 +3,7 @@
 namespace Tests\Validation;
 
 use DarkGhostHunter\RutUtils\Rut;
+use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Validator;
 use InvalidArgumentException;
@@ -17,25 +18,14 @@ class ValidateNumExistsTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->afterApplicationCreated(function () {
+            $this->prepareDatabase();
+        });
 
-        $this->prepareDatabase();
+        parent::setUp();
     }
 
     public function testNumExists()
-    {
-        $user = User::inRandomOrder()->first();
-
-        $validator = Validator::make([
-            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
-        ], [
-            'rut' => 'num_exists:testing.users,rut_num'
-        ]);
-
-        $this->assertFalse($validator->fails());
-    }
-
-    public function testNumExistsWithColumnGuessing()
     {
         $user = User::inRandomOrder()->first();
 
@@ -48,12 +38,25 @@ class ValidateNumExistsTest extends TestCase
         $this->assertFalse($validator->fails());
     }
 
+    public function testNumExistsWithColumnGuessing()
+    {
+        $user = User::inRandomOrder()->first();
+
+        $validator = Validator::make([
+            'rut' => (new Rut($user->rut_num, $user->rut_vd))->toFormattedString()
+        ], [
+            'rut' => 'num_exists:testing.users'
+        ]);
+
+        $this->assertFalse($validator->fails());
+    }
+
     public function testNumExistsFailsWhenDoesntExists()
     {
         $user = User::inRandomOrder()->first();
 
         do {
-            $rut = Rut::generate();
+            $rut = RutGenerator::make()->generate();
         } while ($rut === Rut::make($user->rut_num . $user->rut_vd));
 
         $validator = Validator::make([
@@ -89,7 +92,7 @@ class ValidateNumExistsTest extends TestCase
         $user = User::inRandomOrder()->first();
 
         $validator = Validator::make([
-            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
+            'rut' => (new Rut($user->rut_num, $user->rut_vd))->toFormattedString()
         ], [
             'rut' => 'num_exists:testing.users,invalid_column'
         ]);

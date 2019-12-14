@@ -2,14 +2,15 @@
 
 namespace Tests\Validation;
 
-use ArgumentCountError;
 use DarkGhostHunter\RutUtils\Rut;
+use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Orchestra\Testbench\TestCase;
 use Tests\PreparesDatabase;
 use Tests\RegistersPackage;
+
 
 class ValidateRuleRutUniqueTest extends TestCase
 {
@@ -18,18 +19,18 @@ class ValidateRuleRutUniqueTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->afterApplicationCreated(function () {
+            $this->prepareDatabase();
+        });
 
-        $this->prepareDatabase();
+        parent::setUp();
     }
 
     public function testValidationRuleRutUnique()
     {
-        $user = User::inRandomOrder()->first();
-
         do {
-            $rut = Rut::generate();
-        } while ($rut === Rut::make($user->rut_num . $user->rut_vd));
+            $rut = RutGenerator::make()->generate();
+        } while (User::where('rut_num', $rut->num)->exists());
 
         $validator = Validator::make([
             'rut' => $rut->toFormattedString()
