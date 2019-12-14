@@ -4,12 +4,13 @@ namespace Tests\Validation;
 
 use DarkGhostHunter\Lararut\ValidatesRut;
 use DarkGhostHunter\RutUtils\Rut;
+use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Validator;
-use InvalidArgumentException;
 use Orchestra\Testbench\TestCase;
 use Tests\PreparesDatabase;
 use Tests\RegistersPackage;
+
 
 class ValidateRutUniqueTest extends TestCase
 {
@@ -18,16 +19,18 @@ class ValidateRutUniqueTest extends TestCase
 
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->afterApplicationCreated(function () {
+            $this->prepareDatabase();
+        });
 
-        $this->prepareDatabase();
+        parent::setUp();
     }
 
     public function testUnique()
     {
         do {
-            $rut = Rut::generate();
-        } while (User::where(['rut_num', $rut->num, 'rut_vd', $rut->vd])->exists());
+            $rut = RutGenerator::make()->generate();
+        } while (User::where('rut_num', $rut->num)->exists());
 
         $validator = Validator::make([
             'rut' => $rut->toFormattedString(),
@@ -41,7 +44,7 @@ class ValidateRutUniqueTest extends TestCase
     public function testUniqueWithColumnGuessing()
     {
         do {
-            $rut = Rut::generate();
+            $rut = RutGenerator::make()->generate();
         } while (User::where(['rut_num', $rut->num, 'rut_vd', $rut->vd])->exists());
 
         $validator = Validator::make([
@@ -51,31 +54,6 @@ class ValidateRutUniqueTest extends TestCase
         ]);
 
         $this->assertFalse($validator->fails());
-    }
-
-    public function testUniqueLowercase()
-    {
-        $user = User::make()->forceFill([
-            'name' => 'Karen',
-            'email' => 'karen.doe@email.com',
-            'password' => '123456',
-            'rut_num' => '12435756',
-            'rut_vd' => 'k',
-        ]);
-
-        $user->save();
-
-        ValidatesRut::useLowercase();
-
-        $validator = Validator::make([
-            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
-        ], [
-            'rut' => 'rut_exists:testing.users'
-        ]);
-
-        $this->assertFalse($validator->fails());
-
-        ValidatesRut::useUppercase();
     }
 
     public function testUniqueFailsWhenNotUnique()

@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use DarkGhostHunter\RutUtils\Rut;
+use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Auth\User;
 
@@ -27,7 +27,7 @@ trait PreparesDatabase
             'name' => 'John',
             'email' => 'john.doe@email.com',
             'password' => '123456',
-            'rut_num' => ($rut = Rut::generate())->num,
+            'rut_num' => ($rut = RutGenerator::make()->generate())->num,
             'rut_vd' => strtoupper($rut->vd),
         ])->save();
 
@@ -36,7 +36,7 @@ trait PreparesDatabase
             'name' => 'Michael',
             'email' => 'michael.doe@email.com',
             'password' => '123456',
-            'rut_num' => ($rut = Rut::generate())->num,
+            'rut_num' => ($rut = RutGenerator::make()->generate())->num,
             'rut_vd' => strtoupper($rut->vd),
         ])->save();
 
