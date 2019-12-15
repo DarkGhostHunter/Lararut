@@ -415,6 +415,18 @@ Schema::create('users', function (Blueprint $table) {
 
 If you plan to use the Number as an index, which may speed up queries to look for RUTs, you can just index the Number column by fluently adding `primary()`, `index()` or `unique()` depending on your data needs. This is because it has more sense to index the Number rather than the whole RUT, and these shouldn't be nullable.
 
+## Rut Collection
+
+This package register a callback to retrieve an array of RUTs as a Laravel Collection when using `many()` and `manyOrThrow()`.
+
+```php
+$ruts = Rut::many([
+    '15500342-1',
+    '7276742-K'
+]);
+
+echo $ruts->first(); // "15.500.342-1"
+```
 ## License
 
 This package is licenced by the [MIT License](LICENSE).
