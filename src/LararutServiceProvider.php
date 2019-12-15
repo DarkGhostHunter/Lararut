@@ -3,6 +3,8 @@
 namespace DarkGhostHunter\Lararut;
 
 use Illuminate\Validation\Rule;
+use DarkGhostHunter\RutUtils\Rut;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -15,7 +17,20 @@ class LararutServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->resolving('validator', function ($validator, $app) {
+        $this->registerRules();
+        $this->addRutCollectionCallback();
+        $this->macroRules();
+        $this->macroBlueprint();
+    }
+
+    /**
+     * Register the Validator rules
+     *
+     * @return void
+     */
+    protected function registerRules()
+    {
+        $this->app->resolving('validator', function ($validator) {
             /** @var \Illuminate\Contracts\Validation\Factory $validator */
             $rules = [
                 'rut'        => [
@@ -52,9 +67,33 @@ class LararutServiceProvider extends ServiceProvider
                 $validator->extend($key, ...$rule);
             }
         });
+    }
 
-        $this->macroRules();
-        $this->macroBlueprint();
+    /**
+     * Let the Rut collection be retrieved as a collection
+     *
+     * @return void
+     */
+    protected function addRutCollectionCallback()
+    {
+        Rut::after(function ($ruts) {
+            return new Collection($ruts);
+        });
+    }
+
+    /**
+     * Register the RUT helper for the blueprint
+     *
+     * @return void
+     */
+    protected function macroBlueprint()
+    {
+        Blueprint::macro('rut', function () {
+            $num = $this->unsignedInteger('rut_num');
+            $this->char('rut_vd', 1);
+
+            return $num;
+        });
     }
 
     /**
@@ -78,16 +117,6 @@ class LararutServiceProvider extends ServiceProvider
 
         Rule::macro('numUnique', function ($table, $column = 'NULL') {
             return new Rules\NumUnique($table, $column);
-        });
-    }
-
-    protected function macroBlueprint()
-    {
-        Blueprint::macro('rut', function () {
-            $num = $this->unsignedInteger('rut_num');
-            $this->char('rut_vd', 1);
-
-            return $num;
         });
     }
 }
