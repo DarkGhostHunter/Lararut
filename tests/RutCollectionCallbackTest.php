@@ -5,10 +5,8 @@ namespace Tests;
 use Orchestra\Testbench\TestCase;
 use DarkGhostHunter\RutUtils\Rut;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Schema\ColumnDefinition;
 
-class RutCollectionCallback extends TestCase
+class RutCollectionCallbackTest extends TestCase
 {
     use RegistersPackage;
 

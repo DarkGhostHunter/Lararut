@@ -6,7 +6,7 @@ use Orchestra\Testbench\TestCase;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
 
-class RutBlueprintMacros extends TestCase
+class RutBlueprintMacrosTest extends TestCase
 {
     use RegistersPackage;
 

@@ -427,6 +427,95 @@ $ruts = Rut::many([
 
 echo $ruts->first(); // "15.500.342-1"
 ```
+
+## Query Builder `find()` helper
+
+In your Database you may have a model with the RUT number as the primary key. Using the default `find()` methods in that model with a full RUT will return unexpected results. You can use the `FindsByRut` trait to overload these methods, that will conveniently take out the number from 
+the RUT to find.
+
+```php
+<?php
+
+namespace App;
+
+use DarkGhostHunter\Lararut\FindsByRut;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable
+{
+    use FindsByRut;
+    
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'rut_num';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+    
+    // ...
+}
+```
+
+Once there, you can issue your full RUT to be found, even if is a Rut object.
+
+```php
+use \App\User;
+use DarkGhostHunter\RutUtils\Rut;
+
+$user = User::find('15500342-1');
+
+$user = User::findOrFail(new Rut(15500342, 1));
+
+$user = User::findMany([new Rut(15500342, 1), '7276742-K']);
+
+$user = User::findOrNew(new Rut(15500342, 1));
+```
+
+> These methods do not validate the incoming RUT. You should always validate the RUT using the new validator rules.
+
+## RUT Query Scope
+
+And as a last freebie, you can add the `QueriesRut` trait into your model to query the database by their RUT number. 
+
+```php
+<?php
+
+namespace App;
+
+use DarkGhostHunter\Lararut\QueriesRut;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable
+{
+    use QueriesRut;
+    
+    /**
+     * The column that holds the RUT number.
+     *
+     * @var bool
+     */
+    public $rutNumberColumn = 'rut_number';
+    
+    // ...
+}
+```
+
+The `$rutNumberColumn` property is optional, since by default the queries are run against the column named `rut_num`.
+
+```php
+use \App\User;
+use DarkGhostHunter\RutUtils\Rut;
+
+$user = User::whereRut('15500342-1')->first();
+```
+
 ## License
 
 This package is licenced by the [MIT License](LICENSE).
