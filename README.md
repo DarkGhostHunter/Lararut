@@ -430,8 +430,9 @@ echo $ruts->first(); // "15.500.342-1"
 
 ## Query Builder `find()`
 
-In your Database you may have a model with the RUT number as the primary key. Using the default `find()` methods in that model with a full RUT will return unexpected results. You can use the `FindsByRut` trait to overload these methods, that will conveniently take out the number from 
-the RUT to find.
+In your Database you may have a model with the RUT number as the primary key. Using the default `find()` methods in that model with a full RUT will return unexpected results. 
+
+You can use the `FindsByRut` trait to overload these methods, that will conveniently take out the number from the RUT to find. 
 
 ```php
 <?php
