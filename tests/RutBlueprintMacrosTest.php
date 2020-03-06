@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Orchestra\Testbench\TestCase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
 
@@ -42,17 +43,35 @@ class RutBlueprintMacrosTest extends TestCase
 
         $this->assertEquals(1, $blueprint->getColumns()[1]->length);
 
-        /** @var \Illuminate\Database\Schema\Blueprint $blueprint */
-        $blueprint = null;
+        $conn = \Doctrine\DBAL\DriverManager::getConnection([
+            'pdo' => DB::connection('testing')->getPdo()
+        ]);
 
-        $schema->create('test_table_with_index', function(Blueprint $table) use (&$blueprint) {
-            $table->rut()->index()->primary()->unique();
-            $blueprint = $table;
+        $schema->create('test_table_with_index', function(Blueprint $table) {
+            $table->rut()->index();
         });
 
-        $this->assertTrue($blueprint->getColumns()[0]->index);
-        $this->assertTrue($blueprint->getColumns()[0]->primary);
-        $this->assertTrue($blueprint->getColumns()[0]->unique);
+        $indexes = $conn->getSchemaManager()->listTableDetails('test_table_with_index')->getIndexes();
+
+        $this->assertArrayHasKey('test_table_with_index_rut_num_index', $indexes);
+
+        $schema->create('test_table_with_primary', function(Blueprint $table) {
+            $table->rut()->primary();
+        });
+
+        $primary = $conn->getSchemaManager()->listTableDetails('test_table_with_primary')->getPrimaryKey();
+
+        $this->assertCount(1, $primary->getColumns());
+        $this->assertContains('rut_num', $primary->getColumns());
+
+        $schema->create('test_table_with_unique', function(Blueprint $table) {
+            $table->rut()->unique();
+        });
+
+        $unique = $conn->getSchemaManager()->listTableDetails('test_table_with_unique')->getIndexes('rut_num');
+
+        $this->assertCount(1, $unique);
+        $this->assertArrayHasKey('test_table_with_unique_rut_num_unique', $unique);
     }
 
 }
