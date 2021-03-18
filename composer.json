@@ -15,13 +15,14 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.2",
-        "illuminate/validation": "^6.0||^7.0",
-        "illuminate/support": "^6.0||^7.0",
-        "darkghosthunter/rut-utils": "^2.0.4"
+        "php": "^7.4||^8.0",
+        "illuminate/validation": "^7.0||^8.0",
+        "illuminate/support": "^7.0||^8.0",
+        "darkghosthunter/rut-utils": "^3.0.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^4.1||^5.0",
+        "orchestra/testbench": "^5.0||^6.0",
+        "phpunit/phpunit": "^9.3",
         "doctrine/dbal": "^2.8"
     },
     "autoload": {
@@ -35,7 +36,7 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit",
+        "test": "vendor/bin/phpunit --coverage-clover build/logs/clover.xml",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     },
     "extra": {
