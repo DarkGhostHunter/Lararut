@@ -23,6 +23,7 @@
     "require-dev": {
         "orchestra/testbench": "^5.0||^6.0",
         "phpunit/phpunit": "^9.3",
+        "mockery/mockery": "^1.4",
         "doctrine/dbal": "^2.8"
     },
     "autoload": {
