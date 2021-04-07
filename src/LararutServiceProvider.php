@@ -2,14 +2,51 @@
 
 namespace DarkGhostHunter\Lararut;
 
-use Illuminate\Validation\Rule;
 use DarkGhostHunter\RutUtils\Rut;
+use Illuminate\Contracts\Validation\Factory;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Validation\Rule;
 
 class LararutServiceProvider extends ServiceProvider
 {
+    /**
+     * Rules to register into the validator.
+     *
+     * @var array
+     */
+    protected const RULES = [
+        'rut'        => [
+            'DarkGhostHunter\Lararut\ValidatesRut@validateRut',
+            'lararut::validation.rut',
+        ],
+        'rut_strict' => [
+            'DarkGhostHunter\Lararut\ValidatesRut@validateRutStrict',
+            'lararut::validation.strict',
+        ],
+        'rut_equal'  => [
+            'DarkGhostHunter\Lararut\ValidatesRut@validateRutEqual',
+            'lararut::validation.equal',
+        ],
+        'rut_exists' => [
+            'DarkGhostHunter\Lararut\ValidatesRut@validateRutExists',
+            'lararut::validation.exists',
+        ],
+        'rut_unique' => [
+            'DarkGhostHunter\Lararut\ValidatesRut@validateRutUnique',
+            'lararut::validation.unique',
+        ],
+        'num_exists' => [
+            'DarkGhostHunter\Lararut\ValidatesRut@validateNumExists',
+            'lararut::validation.num_exists',
+        ],
+        'num_unique' => [
+            'DarkGhostHunter\Lararut\ValidatesRut@validateNumUnique',
+            'lararut::validation.num_unique',
+        ],
+    ];
+
     /**
      * Register the application services.
      *
@@ -30,40 +67,8 @@ class LararutServiceProvider extends ServiceProvider
      */
     protected function registerRules()
     {
-        $this->app->resolving('validator', function ($validator) {
-            /** @var \Illuminate\Contracts\Validation\Factory $validator */
-            $rules = [
-                'rut'        => [
-                    'DarkGhostHunter\Lararut\ValidatesRut@validateRut',
-                    'lararut::validation.rut',
-                ],
-                'rut_strict' => [
-                    'DarkGhostHunter\Lararut\ValidatesRut@validateRutStrict',
-                    'lararut::validation.strict',
-                ],
-                'rut_equal'  => [
-                    'DarkGhostHunter\Lararut\ValidatesRut@validateRutEqual',
-                    'lararut::validation.equal',
-                ],
-                'rut_exists' => [
-                    'DarkGhostHunter\Lararut\ValidatesRut@validateRutExists',
-                    'lararut::validation.exists',
-                ],
-                'rut_unique' => [
-                    'DarkGhostHunter\Lararut\ValidatesRut@validateRutUnique',
-                    'lararut::validation.unique',
-                ],
-                'num_exists' => [
-                    'DarkGhostHunter\Lararut\ValidatesRut@validateNumExists',
-                    'lararut::validation.num_exists',
-                ],
-                'num_unique' => [
-                    'DarkGhostHunter\Lararut\ValidatesRut@validateNumUnique',
-                    'lararut::validation.num_unique',
-                ],
-            ];
-
-            foreach ($rules as $key => $rule) {
+        $this->app->resolving('validator', static function (Factory $validator) {
+            foreach (static::RULES as $key => $rule) {
                 $validator->extend($key, ...$rule);
             }
         });
@@ -103,19 +108,19 @@ class LararutServiceProvider extends ServiceProvider
      */
     protected function macroRules()
     {
-        Rule::macro('rutExists', function ($table, $numColumn = 'NULL', $rutColumn = 'NULL') {
+        Rule::macro('rutExists', static function ($table, $numColumn = 'NULL', $rutColumn = 'NULL') {
             return new Rules\RutExists($table, $numColumn, $rutColumn);
         });
 
-        Rule::macro('rutUnique', function ($table, $numColumn = 'NULL', $rutColumn = 'NULL') {
+        Rule::macro('rutUnique', static function ($table, $numColumn = 'NULL', $rutColumn = 'NULL') {
             return new Rules\RutUnique($table, $numColumn, $rutColumn);
         });
 
-        Rule::macro('numExists', function ($table, $column = 'NULL') {
+        Rule::macro('numExists', static function ($table, $column = 'NULL') {
             return new Rules\NumExists($table, $column);
         });
 
-        Rule::macro('numUnique', function ($table, $column = 'NULL') {
+        Rule::macro('numUnique', static function ($table, $column = 'NULL') {
             return new Rules\NumUnique($table, $column);
         });
     }
