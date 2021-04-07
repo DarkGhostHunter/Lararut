@@ -15,7 +15,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.4||^8.0",
+        "php": ">=7.4",
         "illuminate/validation": "^7.0||^8.0",
         "illuminate/support": "^7.0||^8.0",
         "darkghosthunter/rut-utils": "^3.0.0"
