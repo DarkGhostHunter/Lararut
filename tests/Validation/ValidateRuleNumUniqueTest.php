@@ -39,7 +39,7 @@ class ValidateRuleNumUniqueTest extends TestCase
             'rut' => Rule::numUnique('testing.users', 'rut_num')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleNumUniqueIgnoringId()
@@ -53,7 +53,7 @@ class ValidateRuleNumUniqueTest extends TestCase
                 ->ignore($user->getKey())
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleNumUniqueIgnoringModel()
@@ -67,7 +67,7 @@ class ValidateRuleNumUniqueTest extends TestCase
                 ->ignoreModel($user)
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleNumUniqueWhere()
@@ -81,7 +81,7 @@ class ValidateRuleNumUniqueTest extends TestCase
                 ->where('name', 'Anything that is not John')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
 
         $user = User::inRandomOrder()->first();
 
@@ -92,7 +92,7 @@ class ValidateRuleNumUniqueTest extends TestCase
                 ->where('name', $user->name)
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testValidationRuleNumUniqueFailsWhenNoArguments()
@@ -107,6 +107,6 @@ class ValidateRuleNumUniqueTest extends TestCase
             'rut' => Rule::numUnique()
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 }

@@ -38,7 +38,7 @@ class ValidateRuleRutUniqueTest extends TestCase
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleRutUniqueIgnoringId()
@@ -52,7 +52,7 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->ignore($user->getKey())
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleRutUniqueIgnoringModel()
@@ -66,7 +66,7 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->ignoreModel($user)
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleRutUniqueIgnoringModelInIgnoreMethod()
@@ -80,7 +80,7 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->ignore($user)
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleRutUniqueWhere()
@@ -94,7 +94,7 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->where('name', 'Anything that is not John')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
 
         $user = User::inRandomOrder()->first();
 
@@ -105,6 +105,6 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->where('name', $user->name)
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

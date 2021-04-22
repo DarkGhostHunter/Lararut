@@ -2,23 +2,26 @@
 
 namespace DarkGhostHunter\Lararut;
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use DarkGhostHunter\RutUtils\Rut;
 use DarkGhostHunter\RutUtils\RutHelper;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Validator;
 
 class ValidatesRut
 {
     /**
      * Returns if the RUTs are valid
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @param mixed $value
-     * @param array $parameters
-     * @param \Illuminate\Validation\Validator $validator
+     * @param  array  $parameters
+     * @param  \Illuminate\Validation\Validator  $validator
+     *
      * @return bool
      */
-    public function validateRut($attribute, $value, $parameters, $validator)
+    public static function validateRut(string $attribute, $value, array $parameters, Validator $validator): bool
     {
         return RutHelper::validate($value);
     }
@@ -26,13 +29,14 @@ class ValidatesRut
     /**
      * Returns if the RUTs are valid and properly formatted
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @param mixed $value
-     * @param array $parameters
-     * @param \Illuminate\Validation\Validator $validator
+     * @param  array  $parameters
+     * @param  \Illuminate\Validation\Validator  $validator
+     *
      * @return bool
      */
-    public function validateRutStrict($attribute, $value, $parameters, $validator)
+    public static function validateRutStrict(string $attribute, $value, array $parameters, Validator $validator): bool
     {
         return RutHelper::validateStrict($value);
     }
@@ -40,13 +44,14 @@ class ValidatesRut
     /**
      * Returns if the RUT is equal to another
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @param mixed $value
-     * @param array $parameters
-     * @param \Illuminate\Validation\Validator $validator
+     * @param  array  $parameters
+     * @param  \Illuminate\Validation\Validator  $validator
+     *
      * @return bool
      */
-    public function validateRutEqual($attribute, $value, $parameters, $validator)
+    public static function validateRutEqual(string $attribute, $value, array $parameters, Validator $validator): bool
     {
         $validator->requireParameterCount(1, $parameters, 'rut_equal');
 
@@ -57,13 +62,14 @@ class ValidatesRut
     /**
      * Returns if the number of the RUT exist in the Database
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @param mixed $value
-     * @param array $parameters
-     * @param \Illuminate\Validation\Validator $validator
+     * @param  array  $parameters
+     * @param  \Illuminate\Validation\Validator  $validator
+     *
      * @return bool
      */
-    public function validateNumExists($attribute, $value, $parameters, $validator)
+    public static function validateNumExists(string $attribute, $value, array $parameters, Validator $validator): bool
     {
         $validator->requireParameterCount(1, $parameters, 'num_exists');
 
@@ -71,7 +77,7 @@ class ValidatesRut
             return false;
         }
 
-        $parameters = $this->parseParameters($parameters, 0, 2);
+        $parameters = static::parseParameters($parameters, 0, 2);
 
         $parameters[1] = $parameters[1] ?? $attribute . '_num';
 
@@ -81,13 +87,14 @@ class ValidatesRut
     /**
      * Returns if the number of the RUT exist in the Database
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @param mixed $value
-     * @param array $parameters
-     * @param \Illuminate\Validation\Validator $validator
+     * @param  array  $parameters
+     * @param  \Illuminate\Validation\Validator  $validator
+     *
      * @return bool
      */
-    public function validateNumUnique($attribute, $value, $parameters, $validator)
+    public static function validateNumUnique(string $attribute, $value, array $parameters, Validator $validator): bool
     {
         $validator->requireParameterCount(1, $parameters, 'num_unique');
 
@@ -95,7 +102,7 @@ class ValidatesRut
             return false;
         }
 
-        $parameters = $this->parseParameters($parameters);
+        $parameters = static::parseParameters($parameters);
 
         $parameters[1] = $parameters[1] ?? $attribute . '_num';
 
@@ -105,13 +112,14 @@ class ValidatesRut
     /**
      * Returns if the RUT exist in the Database
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @param mixed $value
-     * @param array $parameters
-     * @param \Illuminate\Validation\Validator $validator
+     * @param  array  $parameters
+     * @param  \Illuminate\Validation\Validator  $validator
+     *
      * @return bool
      */
-    public function validateRutExists($attribute, $value, $parameters, $validator)
+    public static function validateRutExists(string $attribute, $value, array $parameters, Validator $validator): bool
     {
         $validator->requireParameterCount(1, $parameters, 'rut_exists');
 
@@ -119,7 +127,7 @@ class ValidatesRut
             return false;
         }
 
-        [$parameters, $wheres] = $this->parseParameters($parameters, 3, 5);
+        [$parameters, $wheres] = static::parseParameters($parameters, 3, 5);
 
         // If the parameters doesn't include the columns for the number and verification
         // digit, we will assume it's the attribute name plus "_num" and "_vd" in the
@@ -133,19 +141,20 @@ class ValidatesRut
             ->where($num_column, $rut->num)
             ->whereRaw("UPPER(\"$vd_column\") = ?", strtoupper($rut->vd));
 
-        return $this->addExtraWheres($query, $wheres)->exists();
+        return static::addExtraWheres($query, $wheres)->exists();
     }
 
     /**
      * Returns if the RUT exist in the Database
      *
-     * @param string $attribute
+     * @param  string  $attribute
      * @param mixed $value
-     * @param array $parameters
-     * @param \Illuminate\Validation\Validator $validator
+     * @param  array  $parameters
+     * @param  \Illuminate\Validation\Validator  $validator
+     *
      * @return bool
      */
-    public function validateRutUnique($attribute, $value, $parameters, $validator)
+    public static function validateRutUnique(string $attribute, $value, array $parameters, Validator $validator): bool
     {
         $validator->requireParameterCount(1, $parameters, 'rut_unique');
 
@@ -153,7 +162,7 @@ class ValidatesRut
             return false;
         }
 
-        [$parameters, $wheres] = $this->parseParameters($parameters, 3, 5);
+        [$parameters, $wheres] = static::parseParameters($parameters, 3, 5);
 
         [$connection, $table] = $validator->parseTable($parameters[0] ?? Str::plural($attribute));
         $num_column = $parameters[1] ?? $attribute . '_num';
@@ -172,7 +181,7 @@ class ValidatesRut
             unset($wheres[0], $wheres[1]);
         }
 
-        return $this->addExtraWheres($query, $wheres)->doesntExist();
+        return static::addExtraWheres($query, $wheres)->doesntExist();
     }
 
     /**
@@ -183,10 +192,12 @@ class ValidatesRut
      * @param  int $pad
      * @return array
      */
-    protected function parseParameters(array $parameters, int $sliceOffset = 0, int $pad = 0)
+    protected static function parseParameters(array $parameters, int $sliceOffset = 0, int $pad = 0): array
     {
         foreach ($parameters as $key => $value) {
-            $parameters[$key] = strtolower($value) === 'null' ? null : $parameters[$key];
+            if (strtolower($value) === 'null') {
+                $parameters[$key] = null;
+            }
         }
 
         if ($pad) {
@@ -201,11 +212,12 @@ class ValidatesRut
     /**
      * Add additional where clauses
      *
-     * @param  \Illuminate\Database\Query\Builder $query
+     * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array $wheres
+     *
      * @return \Illuminate\Database\Query\Builder
      */
-    protected function addExtraWheres($query, array $wheres)
+    protected static function addExtraWheres(Builder $query, array $wheres): Builder
     {
         foreach (array_chunk($wheres, 2) as $item) {
             if ($item[1]) {

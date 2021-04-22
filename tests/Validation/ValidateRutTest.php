@@ -24,7 +24,7 @@ class ValidateRutTest extends TestCase
             'rut_4' => 'rut',
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testRutInArray()
@@ -35,7 +35,7 @@ class ValidateRutTest extends TestCase
             'rut' => 'rut',
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testRutFailsOnInvalidRut()
@@ -46,7 +46,7 @@ class ValidateRutTest extends TestCase
             'rut' => 'rut'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testRutFailsOnSingleInvalidRutArray()
@@ -57,7 +57,7 @@ class ValidateRutTest extends TestCase
             'rut' => 'rut'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testRutFailsOnAllInvalidRutArray()
@@ -68,7 +68,7 @@ class ValidateRutTest extends TestCase
             'rut' => 'rut'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testRutFailsOnAllRutArrayWithEmptyChild()
@@ -79,6 +79,6 @@ class ValidateRutTest extends TestCase
             'rut' => 'rut'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

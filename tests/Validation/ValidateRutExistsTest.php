@@ -2,7 +2,6 @@
 
 namespace Tests\Validation;
 
-use DarkGhostHunter\Lararut\ValidatesRut;
 use DarkGhostHunter\RutUtils\Rut;
 use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
@@ -36,7 +35,7 @@ class ValidateRutExistsTest extends TestCase
             'rut' => 'rut_exists:testing.users,rut_num,rut_vd'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testRutExistsWithColumnGuessing()
@@ -49,7 +48,7 @@ class ValidateRutExistsTest extends TestCase
             'rut' => 'rut_exists:testing.users'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
 
         $user = User::inRandomOrder()->first();
 
@@ -59,7 +58,7 @@ class ValidateRutExistsTest extends TestCase
             'rut' => 'rut_exists:testing.users,rut_num'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testRutExistsFailsWhenDoesntExists()
@@ -76,7 +75,7 @@ class ValidateRutExistsTest extends TestCase
             'rut' => 'rut_exists:testing.users,rut_num,rut_vd'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testRutExistsFailsWhenItsInvalid()
@@ -95,6 +94,6 @@ class ValidateRutExistsTest extends TestCase
             'rut' => 'rut_exists:testing.users,rut_num,rut_vd'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

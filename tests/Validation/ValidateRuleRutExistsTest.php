@@ -3,7 +3,6 @@
 namespace Tests\Validation;
 
 use ArgumentCountError;
-use DarkGhostHunter\Lararut\ValidatesRut;
 use DarkGhostHunter\RutUtils\Rut;
 use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
@@ -38,7 +37,7 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleRutExistsWithColumnGuessing()
@@ -51,7 +50,7 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleRutExistsWithWhere()
@@ -65,7 +64,7 @@ class ValidateRuleRutExistsTest extends TestCase
                 ->where('name', $user->name)
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleRutExistsFailsWhenNoArguments()
@@ -80,7 +79,7 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists()
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleRutExistsFailWhenRutInvalid()
@@ -99,7 +98,7 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testValidationRuleRutExistsFailWhenRutDoesntExists()
@@ -116,7 +115,7 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testValidationRuleRutExistsFailWhenInvalidColumn()
@@ -129,6 +128,6 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users', 'absent_num', 'absent_vd')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

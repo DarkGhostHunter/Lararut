@@ -37,7 +37,7 @@ class ValidateRuleNumExistsTest extends TestCase
             'rut' => Rule::numExists('testing.users', 'rut_num')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleNumExistsWithColumnGuessing()
@@ -50,7 +50,7 @@ class ValidateRuleNumExistsTest extends TestCase
             'rut' => Rule::numExists('testing.users')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleNumExistsWithWhere()
@@ -64,7 +64,7 @@ class ValidateRuleNumExistsTest extends TestCase
                 ->where('name', $user->name)
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleNumExistsFailsWithNoArguments()
@@ -79,7 +79,7 @@ class ValidateRuleNumExistsTest extends TestCase
             'rut' => Rule::numExists()
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testValidationRuleNumExistsFailWhenRutInvalid()
@@ -98,7 +98,7 @@ class ValidateRuleNumExistsTest extends TestCase
             'rut' => Rule::numExists('testing.users', 'rut_num')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testValidationRuleNumExistsFailWhenRutDoesntExists()
@@ -115,7 +115,7 @@ class ValidateRuleNumExistsTest extends TestCase
             'rut' => Rule::numExists('testing.users', 'rut_num')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testValidationRuleNumExistsFailWhenAbsentColumn()
@@ -128,7 +128,7 @@ class ValidateRuleNumExistsTest extends TestCase
             'rut' => Rule::numExists('testing.users', 'absent_num')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testValidationRuleNumExistsFailWhenInvalidColumn()
@@ -141,6 +141,6 @@ class ValidateRuleNumExistsTest extends TestCase
             'rut' => Rule::numExists('testing.users', 'absent_num')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

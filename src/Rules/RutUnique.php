@@ -14,14 +14,14 @@ class RutUnique
      *
      * @var string
      */
-    protected $numColumn;
+    protected string $numColumn;
 
     /**
      * Column of the VD number
      *
      * @var string
      */
-    protected $vdColumn;
+    protected string $vdColumn;
 
     /**
      * The ID that should be ignored.
@@ -35,7 +35,7 @@ class RutUnique
      *
      * @var string
      */
-    protected $idColumn = 'id';
+    protected string $idColumn = 'id';
 
     /**
      * Create a new rule instance.
@@ -44,7 +44,7 @@ class RutUnique
      * @param string $numColumn
      * @param string $vdColumn
      */
-    public function __construct($table, $numColumn, $vdColumn)
+    public function __construct(string $table, string $numColumn, string $vdColumn)
     {
         $this->table = $table;
         $this->numColumn = $numColumn;
@@ -58,7 +58,7 @@ class RutUnique
      * @param  string|null  $idColumn
      * @return $this
      */
-    public function ignore($id, $idColumn = null)
+    public function ignore($id, $idColumn = null): RutUnique
     {
         if ($id instanceof Model) {
             return $this->ignoreModel($id, $idColumn);
@@ -77,7 +77,7 @@ class RutUnique
      * @param  string|null  $idColumn
      * @return $this
      */
-    public function ignoreModel($model, $idColumn = null)
+    public function ignoreModel(Model $model, ?string $idColumn = null): RutUnique
     {
         $this->idColumn = $idColumn ?? $model->getKeyName();
         $this->ignore = $model->{$this->idColumn};

@@ -20,7 +20,7 @@ class ValidateRutStrictTest extends TestCase
             'rut_2' => 'rut_strict',
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testRutStrictInArray()
@@ -31,7 +31,7 @@ class ValidateRutStrictTest extends TestCase
             'rut' => 'rut_strict',
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testRutStrictFailsOnInvalidFormat()
@@ -42,7 +42,7 @@ class ValidateRutStrictTest extends TestCase
             'rut' => 'rut_strict'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testRutFailsOnInvalidRut()
@@ -53,7 +53,7 @@ class ValidateRutStrictTest extends TestCase
             'rut' => 'rut_strict'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testRutStrictFailsOnSingleInvalidFormatRutArray()
@@ -64,7 +64,7 @@ class ValidateRutStrictTest extends TestCase
             'rut' => 'rut_strict'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testRutStrictFailsOnAllInvalidFormatRutArray()
@@ -75,7 +75,7 @@ class ValidateRutStrictTest extends TestCase
             'rut' => 'rut_strict'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testRutFailsOnAllRutArrayWithEmptyChild()
@@ -86,6 +86,6 @@ class ValidateRutStrictTest extends TestCase
             'rut' => 'rut_strict'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

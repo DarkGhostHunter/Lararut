@@ -35,7 +35,7 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testNumExistsWithColumnGuessing()
@@ -48,7 +48,7 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
     public function testNumExistsFailsWhenDoesntExists()
@@ -65,7 +65,7 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users,rut_num'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testNumExistsFailsWhenInvalidRut()
@@ -84,7 +84,7 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users,rut_num'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testNumExistsFailsWhenInvalidColumn()
@@ -97,7 +97,7 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users,invalid_column'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
     public function testNumExistsFailsWhenAbsentOneParameters()
@@ -112,6 +112,6 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

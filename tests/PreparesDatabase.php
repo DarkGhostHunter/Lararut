@@ -12,10 +12,8 @@ trait PreparesDatabase
     {
         $this->loadLaravelMigrations();
 
-        /** @var \Illuminate\Database\DatabaseManager $db */
-        $db = $this->app->make('db');
-
-        $db->connection()
+        $this->app->make('db')
+            ->connection()
             ->getSchemaBuilder()
             ->table('users', function (Blueprint $table) {
                 $table->unsignedBigInteger('rut_num')->nullable();
