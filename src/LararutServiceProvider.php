@@ -17,34 +17,13 @@ class LararutServiceProvider extends ServiceProvider
      * @var array
      */
     protected const RULES = [
-        'rut'        => [
-            'DarkGhostHunter\Lararut\ValidatesRut@validateRut',
-            'lararut::validation.rut',
-        ],
-        'rut_strict' => [
-            'DarkGhostHunter\Lararut\ValidatesRut@validateRutStrict',
-            'lararut::validation.strict',
-        ],
-        'rut_equal'  => [
-            'DarkGhostHunter\Lararut\ValidatesRut@validateRutEqual',
-            'lararut::validation.equal',
-        ],
-        'rut_exists' => [
-            'DarkGhostHunter\Lararut\ValidatesRut@validateRutExists',
-            'lararut::validation.exists',
-        ],
-        'rut_unique' => [
-            'DarkGhostHunter\Lararut\ValidatesRut@validateRutUnique',
-            'lararut::validation.unique',
-        ],
-        'num_exists' => [
-            'DarkGhostHunter\Lararut\ValidatesRut@validateNumExists',
-            'lararut::validation.num_exists',
-        ],
-        'num_unique' => [
-            'DarkGhostHunter\Lararut\ValidatesRut@validateNumUnique',
-            'lararut::validation.num_unique',
-        ],
+        'rut'        => [[ValidatesRut::class, 'validateRut'], 'lararut::validation.rut',],
+        'rut_strict' => [[ValidatesRut::class, 'validateRutStrict'], 'lararut::validation.strict',],
+        'rut_equal'  => [[ValidatesRut::class, 'validateRutEqual'], 'lararut::validation.equal',],
+        'rut_exists' => [[ValidatesRut::class, 'validateRutExists'], 'lararut::validation.exists',],
+        'rut_unique' => [[ValidatesRut::class, 'validateRutUnique'], 'lararut::validation.unique',],
+        'num_exists' => [[ValidatesRut::class, 'validateNumExists'], 'lararut::validation.num_exists',],
+        'num_unique' => [[ValidatesRut::class, 'validateNumUnique'], 'lararut::validation.num_unique',],
     ];
 
     /**
@@ -52,7 +31,7 @@ class LararutServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerRules();
         $this->addRutCollectionCallback();
@@ -65,7 +44,7 @@ class LararutServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerRules()
+    protected function registerRules(): void
     {
         $this->app->resolving('validator', static function (Factory $validator) {
             foreach (static::RULES as $key => $rule) {
@@ -79,7 +58,7 @@ class LararutServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function addRutCollectionCallback()
+    protected function addRutCollectionCallback(): void
     {
         Rut::after(function ($ruts) {
             return new Collection($ruts);
@@ -91,9 +70,9 @@ class LararutServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function macroBlueprint()
+    protected function macroBlueprint(): void
     {
-        Blueprint::macro('rut', function () {
+        Blueprint::macro('rut', function() {
             $num = $this->unsignedInteger('rut_num');
             $this->char('rut_vd', 1);
 
@@ -106,7 +85,7 @@ class LararutServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function macroRules()
+    protected function macroRules(): void
     {
         Rule::macro('rutExists', static function ($table, $numColumn = 'NULL', $rutColumn = 'NULL') {
             return new Rules\RutExists($table, $numColumn, $rutColumn);

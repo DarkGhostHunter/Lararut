@@ -13,14 +13,14 @@ class RutExists
      *
      * @var string
      */
-    protected $numColumn;
+    protected string $numColumn;
 
     /**
      * Column of the RUT verification digit
      *
      * @var string
      */
-    protected $vdColumn;
+    protected string $vdColumn;
 
     /**
      * Create a new rule instance.
@@ -29,7 +29,7 @@ class RutExists
      * @param string $numColumn
      * @param string $vdColumn
      */
-    public function __construct($table, $numColumn = 'NULL', $vdColumn = 'NULL')
+    public function __construct(string $table, string $numColumn = 'NULL', string $vdColumn = 'NULL')
     {
         $this->table = $table;
         $this->numColumn = $numColumn;

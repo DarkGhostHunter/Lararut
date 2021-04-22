@@ -25,7 +25,7 @@ class ValidateNumUniqueTest extends TestCase
         parent::setUp();
     }
 
-    public function testUnique()
+    public function testUnique(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -37,10 +37,10 @@ class ValidateNumUniqueTest extends TestCase
             'rut' => 'num_unique:testing.users,rut_num'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testUniqueWithColumnGuessing()
+    public function testUniqueWithColumnGuessing(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -52,10 +52,10 @@ class ValidateNumUniqueTest extends TestCase
             'rut' => 'num_unique:testing.users'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testUniqueFailsWhenNotUnique()
+    public function testUniqueFailsWhenNotUnique(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -65,10 +65,10 @@ class ValidateNumUniqueTest extends TestCase
             'rut' => 'num_unique:testing.users,rut_num'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testUniqueFailsWhenInvalidRut()
+    public function testUniqueFailsWhenInvalidRut(): void
     {
         $validator = Validator::make([
             'rut' => '18.765.432-1',
@@ -76,7 +76,7 @@ class ValidateNumUniqueTest extends TestCase
             'rut' => 'num_unique:testing.users,rut_num'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
 }

@@ -26,7 +26,7 @@ class ValidateRuleRutUniqueTest extends TestCase
         parent::setUp();
     }
 
-    public function testValidationRuleRutUnique()
+    public function testValidationRuleRutUnique(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -38,10 +38,10 @@ class ValidateRuleRutUniqueTest extends TestCase
             'rut' => Rule::rutUnique('testing.users', 'rut_num', 'rut_vd')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutUniqueIgnoringId()
+    public function testValidationRuleRutUniqueIgnoringId(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -52,10 +52,10 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->ignore($user->getKey())
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutUniqueIgnoringModel()
+    public function testValidationRuleRutUniqueIgnoringModel(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -66,10 +66,10 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->ignoreModel($user)
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutUniqueIgnoringModelInIgnoreMethod()
+    public function testValidationRuleRutUniqueIgnoringModelInIgnoreMethod(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -80,10 +80,10 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->ignore($user)
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutUniqueWhere()
+    public function testValidationRuleRutUniqueWhere(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -94,7 +94,7 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->where('name', 'Anything that is not John')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
 
         $user = User::inRandomOrder()->first();
 
@@ -105,6 +105,6 @@ class ValidateRuleRutUniqueTest extends TestCase
                 ->where('name', $user->name)
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

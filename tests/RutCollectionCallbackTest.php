@@ -2,15 +2,15 @@
 
 namespace Tests;
 
-use Orchestra\Testbench\TestCase;
 use DarkGhostHunter\RutUtils\Rut;
 use Illuminate\Support\Collection;
+use Orchestra\Testbench\TestCase;
 
 class RutCollectionCallbackTest extends TestCase
 {
     use RegistersPackage;
 
-    public function testReturnsCollection()
+    public function testReturnsCollection(): void
     {
         /** @var Collection $collection */
         $collection = Rut::many([
@@ -18,9 +18,9 @@ class RutCollectionCallbackTest extends TestCase
             $rut_2 = rut()->generate(),
         ]);
 
-        $this->assertInstanceOf(Collection::class, $collection);
-        $this->assertEquals($rut_1, $collection->first());
-        $this->assertEquals($rut_2, $collection->last());
+        static::assertInstanceOf(Collection::class, $collection);
+        static::assertEquals($rut_1, $collection->first());
+        static::assertEquals($rut_2, $collection->last());
     }
 
 }

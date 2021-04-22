@@ -7,13 +7,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
- * Trait FindsByRut
- * ---
- * This class replaces the find* methods to take out the RUT number and use.
- *
- * @package DarkGhostHunter\Lararut
- *
- * @mixin \Illuminate\Database\Eloquent\Model
+ * @deprecated  Use the `HasRut` trait.
  */
 trait FindsByRut
 {

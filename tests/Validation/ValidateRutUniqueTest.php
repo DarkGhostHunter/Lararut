@@ -2,7 +2,6 @@
 
 namespace Tests\Validation;
 
-use DarkGhostHunter\Lararut\ValidatesRut;
 use DarkGhostHunter\RutUtils\Rut;
 use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
@@ -26,7 +25,7 @@ class ValidateRutUniqueTest extends TestCase
         parent::setUp();
     }
 
-    public function testUnique()
+    public function testUnique(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -38,10 +37,10 @@ class ValidateRutUniqueTest extends TestCase
             'rut' => 'rut_unique:testing.users,rut_num,rut_vd'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testUniqueWithColumnGuessing()
+    public function testUniqueWithColumnGuessing(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -53,10 +52,10 @@ class ValidateRutUniqueTest extends TestCase
             'rut' => 'rut_unique:testing.users'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testUniqueFailsWhenNotUnique()
+    public function testUniqueFailsWhenNotUnique(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -66,10 +65,10 @@ class ValidateRutUniqueTest extends TestCase
             'rut' => 'rut_unique:testing.users,rut_num,rut_vd'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testUniqueFailsWhenInvalidRut()
+    public function testUniqueFailsWhenInvalidRut(): void
     {
         $validator = Validator::make([
             'rut' => '18.765.432-1',
@@ -77,7 +76,7 @@ class ValidateRutUniqueTest extends TestCase
             'rut' => 'rut_unique:testing.users,rut_num,rut_vd'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
 }

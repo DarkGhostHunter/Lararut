@@ -25,7 +25,7 @@ class ValidateNumExistsTest extends TestCase
         parent::setUp();
     }
 
-    public function testNumExists()
+    public function testNumExists(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -35,10 +35,10 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testNumExistsWithColumnGuessing()
+    public function testNumExistsWithColumnGuessing(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -48,10 +48,10 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testNumExistsFailsWhenDoesntExists()
+    public function testNumExistsFailsWhenDoesntExists(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -65,10 +65,10 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users,rut_num'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testNumExistsFailsWhenInvalidRut()
+    public function testNumExistsFailsWhenInvalidRut(): void
     {
         User::make()->forceFill([
             'name' => 'Alice',
@@ -84,10 +84,10 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users,rut_num'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testNumExistsFailsWhenInvalidColumn()
+    public function testNumExistsFailsWhenInvalidColumn(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -97,10 +97,10 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists:testing.users,invalid_column'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testNumExistsFailsWhenAbsentOneParameters()
+    public function testNumExistsFailsWhenAbsentOneParameters(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -112,6 +112,6 @@ class ValidateNumExistsTest extends TestCase
             'rut' => 'num_exists'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

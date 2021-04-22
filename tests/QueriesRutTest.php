@@ -2,12 +2,12 @@
 
 namespace Tests;
 
-use Orchestra\Testbench\TestCase;
-use DarkGhostHunter\RutUtils\Rut;
-use Illuminate\Foundation\Auth\User;
 use DarkGhostHunter\Lararut\QueriesRut;
-use Illuminate\Database\Schema\Blueprint;
+use DarkGhostHunter\RutUtils\Rut;
 use DarkGhostHunter\RutUtils\RutGenerator;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Auth\User;
+use Orchestra\Testbench\TestCase;
 
 class QueriesRutTest extends TestCase
 {
@@ -35,21 +35,21 @@ class QueriesRutTest extends TestCase
         parent::setUp();
     }
 
-    public function testWhereRut()
+    public function testWhereRut(): void
     {
         $rut = $this->model->inRandomOrder()->first(['rut_num', 'rut_vd']);
 
-        $this->assertTrue($this->model->whereRut($rut)->exists());
-        $this->assertTrue($this->model->whereRut((string)$rut)->exists());
+        static::assertTrue($this->model->whereRut($rut)->exists());
+        static::assertTrue($this->model->whereRut((string)$rut)->exists());
 
         do {
             $rut = RutGenerator::make()->generate();
         } while ($this->model->whereRut($rut)->exists());
 
-        $this->assertTrue($this->model->whereRut($rut)->doesntExist());
+        static::assertTrue($this->model->whereRut($rut)->doesntExist());
     }
 
-    public function testWhereRutUsesCustomColumn()
+    public function testWhereRutUsesCustomColumn(): void
     {
         $this->app->make('db')->connection()
             ->getSchemaBuilder()
@@ -84,6 +84,6 @@ class QueriesRutTest extends TestCase
             'test_column_vd' => strtoupper($rut->vd),
         ])->save();
 
-        $this->assertTrue($model->whereRut($rut)->exists());
+        static::assertTrue($model->whereRut($rut)->exists());
     }
 }

@@ -11,7 +11,7 @@ class ValidateRutEqualTest extends TestCase
 {
     use RegistersPackage;
 
-    public function testRutEqual()
+    public function testRutEqual(): void
     {
         $validator = Validator::make([
             'rut' => '19.743.721-9',
@@ -19,10 +19,10 @@ class ValidateRutEqualTest extends TestCase
             'rut' => 'rut_equal:197437219'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testRutEqualList()
+    public function testRutEqualList(): void
     {
         $validator = Validator::make([
             'rut' => '19.743.721-9',
@@ -30,10 +30,10 @@ class ValidateRutEqualTest extends TestCase
             'rut' => 'rut_equal:197437219,19.743.721-9'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testRutEqualFailsWhenNoArguments()
+    public function testRutEqualFailsWhenNoArguments(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -43,10 +43,10 @@ class ValidateRutEqualTest extends TestCase
             'rut' => 'rut_equal'
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testRutEqualFailsOnNotEqual()
+    public function testRutEqualFailsOnNotEqual(): void
     {
         $validator = Validator::make([
             'rut' => '19.743.721-9',
@@ -54,10 +54,10 @@ class ValidateRutEqualTest extends TestCase
             'rut' => 'rut_equal:143281450'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testRutEqualFailsOnNotEqualOnArray()
+    public function testRutEqualFailsOnNotEqualOnArray(): void
     {
         $validator = Validator::make([
             'rut' => '19.743.721-9',
@@ -65,10 +65,10 @@ class ValidateRutEqualTest extends TestCase
             'rut' => 'rut_equal:143281450,19.743.721-9'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testRutEqualFailsOnInvalidRut()
+    public function testRutEqualFailsOnInvalidRut(): void
     {
         $validator = Validator::make([
             'rut' => '18.765.432-1',
@@ -76,10 +76,10 @@ class ValidateRutEqualTest extends TestCase
             'rut' => 'rut_equal:187654321'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testRutEqualFailsOnArray()
+    public function testRutEqualFailsOnArray(): void
     {
         $validator = Validator::make([
             'rut' => ['19.743.721-9','19.743.721-9']
@@ -87,6 +87,6 @@ class ValidateRutEqualTest extends TestCase
             'rut' => 'rut_equal:19.743.721-9'
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

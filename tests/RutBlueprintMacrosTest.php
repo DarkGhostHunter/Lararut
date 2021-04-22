@@ -2,25 +2,24 @@
 
 namespace Tests;
 
-use Orchestra\Testbench\TestCase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Schema\ColumnDefinition;
+use Orchestra\Testbench\TestCase;
 
 class RutBlueprintMacrosTest extends TestCase
 {
     use RegistersPackage;
 
-    public function testHelperReturnsRutNumberColumn()
+    public function testHelperReturnsRutNumberColumn(): void
     {
         $blueprint = new Blueprint('test_table');
 
         $number = $blueprint->rut();
 
-        $this->assertInstanceOf(ColumnDefinition::class, $number);
+        static::assertInstanceOf(ColumnDefinition::class, $number);
     }
 
-    public function testCreatesDatabaseWithRutColumns()
+    public function testCreatesDatabaseWithRutColumns(): void
     {
         /** @var \Illuminate\Database\Schema\Builder $schema */
         $schema = $this->app->make('db')->connection()->getSchemaBuilder();
@@ -33,45 +32,50 @@ class RutBlueprintMacrosTest extends TestCase
             $blueprint = $table;
         });
 
-        $this->assertTrue($schema->hasColumn('test_table', 'rut_num'));
-        $this->assertTrue($schema->hasColumn('test_table', 'rut_vd'));
-        $this->assertEquals('integer', $schema->getColumnType('test_table', 'rut_num'));
-        $this->assertEquals('string', $schema->getColumnType('test_table', 'rut_vd'));
+        static::assertTrue($schema->hasColumn('test_table', 'rut_num'));
+        static::assertTrue($schema->hasColumn('test_table', 'rut_vd'));
+        static::assertEquals('integer', $schema->getColumnType('test_table', 'rut_num'));
+        static::assertEquals('string', $schema->getColumnType('test_table', 'rut_vd'));
 
-        $this->assertFalse($blueprint->getColumns()[0]->autoIncrement);
-        $this->assertTrue($blueprint->getColumns()[0]->unsigned);
+        static::assertFalse($blueprint->getColumns()[0]->autoIncrement);
+        static::assertTrue($blueprint->getColumns()[0]->unsigned);
 
-        $this->assertEquals(1, $blueprint->getColumns()[1]->length);
-
-        $conn = \Doctrine\DBAL\DriverManager::getConnection([
-            'pdo' => DB::connection('testing')->getPdo()
-        ]);
+        static::assertEquals(1, $blueprint->getColumns()[1]->length);
 
         $schema->create('test_table_with_index', function(Blueprint $table) {
             $table->rut()->index();
         });
 
-        $indexes = $conn->getSchemaManager()->listTableDetails('test_table_with_index')->getIndexes();
+        $indexes = $schema->getConnection()
+            ->getDoctrineSchemaManager()
+            ->listTableDetails('test_table_with_index')
+            ->getIndexes();
 
-        $this->assertArrayHasKey('test_table_with_index_rut_num_index', $indexes);
+        static::assertArrayHasKey('test_table_with_index_rut_num_index', $indexes);
 
         $schema->create('test_table_with_primary', function(Blueprint $table) {
             $table->rut()->primary();
         });
 
-        $primary = $conn->getSchemaManager()->listTableDetails('test_table_with_primary')->getPrimaryKey();
+        $primary = $schema->getConnection()
+            ->getDoctrineSchemaManager()
+            ->listTableDetails('test_table_with_primary')
+            ->getPrimaryKey();
 
-        $this->assertCount(1, $primary->getColumns());
-        $this->assertContains('rut_num', $primary->getColumns());
+        static::assertCount(1, $primary->getColumns());
+        static::assertContains('rut_num', $primary->getColumns());
 
         $schema->create('test_table_with_unique', function(Blueprint $table) {
             $table->rut()->unique();
         });
 
-        $unique = $conn->getSchemaManager()->listTableDetails('test_table_with_unique')->getIndexes('rut_num');
+        $unique = $schema->getConnection()
+            ->getDoctrineSchemaManager()
+            ->listTableDetails('test_table_with_unique')
+            ->getIndexes('rut_num');
 
-        $this->assertCount(1, $unique);
-        $this->assertArrayHasKey('test_table_with_unique_rut_num_unique', $unique);
+        static::assertCount(1, $unique);
+        static::assertArrayHasKey('test_table_with_unique_rut_num_unique', $unique);
     }
 
 }

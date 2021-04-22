@@ -3,7 +3,6 @@
 namespace Tests\Validation;
 
 use ArgumentCountError;
-use DarkGhostHunter\Lararut\ValidatesRut;
 use DarkGhostHunter\RutUtils\Rut;
 use DarkGhostHunter\RutUtils\RutGenerator;
 use Illuminate\Foundation\Auth\User;
@@ -28,7 +27,7 @@ class ValidateRuleRutExistsTest extends TestCase
         parent::setUp();
     }
 
-    public function testValidationRuleRutExists()
+    public function testValidationRuleRutExists(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -38,10 +37,10 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutExistsWithColumnGuessing()
+    public function testValidationRuleRutExistsWithColumnGuessing(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -51,10 +50,10 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users')
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutExistsWithWhere()
+    public function testValidationRuleRutExistsWithWhere(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -65,10 +64,10 @@ class ValidateRuleRutExistsTest extends TestCase
                 ->where('name', $user->name)
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutExistsFailsWhenNoArguments()
+    public function testValidationRuleRutExistsFailsWhenNoArguments(): void
     {
         $this->expectException(ArgumentCountError::class);
 
@@ -80,10 +79,10 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists()
         ]);
 
-        $this->assertFalse($validator->fails());
+        static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutExistsFailWhenRutInvalid()
+    public function testValidationRuleRutExistsFailWhenRutInvalid(): void
     {
         User::make()->forceFill([
             'name' => 'Alice',
@@ -99,10 +98,10 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testValidationRuleRutExistsFailWhenRutDoesntExists()
+    public function testValidationRuleRutExistsFailWhenRutDoesntExists(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -116,10 +115,10 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 
-    public function testValidationRuleRutExistsFailWhenInvalidColumn()
+    public function testValidationRuleRutExistsFailWhenInvalidColumn(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -129,6 +128,6 @@ class ValidateRuleRutExistsTest extends TestCase
             'rut' => Rule::rutExists('testing.users', 'absent_num', 'absent_vd')
         ]);
 
-        $this->assertTrue($validator->fails());
+        static::assertTrue($validator->fails());
     }
 }

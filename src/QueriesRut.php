@@ -5,6 +5,9 @@ namespace DarkGhostHunter\Lararut;
 use DarkGhostHunter\RutUtils\Rut;
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @deprecated  Use the `HasRut` trait.
+ */
 trait QueriesRut
 {
     /**

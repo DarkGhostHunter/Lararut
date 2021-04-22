@@ -10,7 +10,7 @@ Additionally, it includes 6 new rules to validate RUT data conveniently.
 
 Check the [RutUtils documentation](https://github.com/DarkGhostHunter/RutUtils/blob/master/README.md) to see all the available methods to create, generate and validate RUTs.
 
-> **Important** This package does not validate if the RUT is from a real person, only if its valid. If you need that kind of functionality, you should let your application interact with the [pseudo-official API](https://portal.sidiv.registrocivil.cl/usuarios-portal/pages/DocumentRequestStatus.xhtml).
+> **Important** This package does not validate if the RUT is from a real person, only if it's valid. If you need that kind of functionality, you should let your application interact with the [pseudo-official API](https://portal.sidiv.registrocivil.cl/usuarios-portal/pages/DocumentRequestStatus.xhtml).
 
 ## Requirements
 
@@ -25,41 +25,6 @@ Fire up Composer and require it into your project:
 
 ```bash
 composer require darkghosthunter/lararut
-```
-
-## Helpers
-
-This package [includes the `rut()` global helper](https://github.com/DarkGhostHunter/RutUtils/#global-helper) file, which allows you to create a Rut instance anywhere in your code, or a Rut Generator if you don't issue any parameter.
-
-```php
-<?php
-
-namespace App\Http\Listeners;
-
-use Illuminate\Auth\Events\Lockout;
-use App\Notifications\ProbablyForgotHisPassword;
-use App\Notifications\SupportReadyToHelp;
-use App\User;
-
-class LogFailedAttempt
-{
-    /**
-     * Handle the event.
-     *
-     * @param  Lockout  $event
-     * @return void
-     */
-    public function handle(Lockout $event)
-    {
-        // Get the RUT from the request input
-        $rut = rut($event->request->input('rut'));
-        
-        // If the user who tried exists in the database, notify him.
-        if ($user = User::where('rut_num', $rut->num)->first()) {
-            $user->notify(new ProbablyForgotHisPassword);
-        }
-    }
-}
 ```
 
 ## Validation rules
@@ -383,25 +348,6 @@ echo $validator->fails(); // true
 
 > **[Warning]** **You should never pass any user controlled request input into the ignore method. Instead, you should only pass a system generated unique ID such as an auto-incrementing ID or UUID from an Eloquent model instance. Otherwise, your application will be vulnerable to an SQL injection attack.**
 
-## Route Model Binding
-
-In your application you may have users identified by their ID, but also by their RUT. It's recommended to override the `resolveRouteBinding()` method of your Eloquent Model to look for its RUT, depending on how it's saved in the database.
-
-```php
-/**
- * Retrieve the model for a bound value.
- *
- * @param  mixed  $value
- * @return \Illuminate\Database\Eloquent\Model|null
- */
-public function resolveRouteBinding($value)
-{
-    return $this->where('rut_num', rut($value)->num)->firstOrFail();
-}
-```
-
-There are also [other alternatives for Route Model Binding](https://laravel.com/docs/6.x/routing#route-model-binding).
-
 ## Database Blueprint helper
 
 If you're creating your database from the ground up, you don't need to manually create the RUT columns. Just use the `rut()` helper in the Blueprint:
@@ -414,9 +360,91 @@ Schema::create('users', function (Blueprint $table) {
 
 If you plan to use the Number as an index, which may speed up queries to look for RUTs, you can just index the Number column by fluently adding `primary()`, `index()` or `unique()` depending on your data needs. This is because it has more sense to index the Number rather than the whole RUT, and these shouldn't be nullable.
 
+## RUT trait for Models
+
+You can add the `HasRut` trait to a model that has a RUT in its columns. This is the recommended way to use RUT in your application models.
+
+> To use this trait, ensure your model saves the RUT Number and RUT Verification digit in separate columns. If that's not your case, use your own scopes and helpers.
+
+```php
+<?php
+
+namespace App\Models;
+
+use DarkGhostHunter\Lararut\HasRut;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable
+{
+    use HasRut;
+    
+    // ...
+}
+```
+
+With that, you will have access to convenient RUT queries:
+
+* `findRut()`: Finds a record by the given RUT.
+* `findManyRut()`: Finds many records by the given RUTs.
+* `findRutOrFail()`: Finds a record by the RUT or fails.
+* `findRutOrNew()`: Finds a record by the RUT or creates one.
+* `whereRut()`: Creates a `WHERE` clause with the RUT number equal to the issued one.
+* `orWhereRut()`: Creates a `OR WHERE` clause with the RUT number equal to the issued one.
+
+> These RUT queries work over the RUT Number for convenience, as the RUT Verification Digit should be verified on persistence.
+
+### `rut` property
+
+Additionally, this trait includes the `rut` property which is dynamically created from the RUT Number and RUT Verification Digit columns.
+
+```php
+echo $user->rut; // "20490006-K"
+```
+
+### Configuring the RUT columns
+
+By convention, the trait uses `rut_num` and `rut_vd` as the default columns to retrieve and save the RUT Number and RUT Verification Digit, respectively.
+
+You can easily change it to anything your database is working with:
+
+```php
+class User extends Authenticatable
+{
+    use HasRut;
+    
+    protected const RUT_NUM = 'numero_rut';
+    protected const RUT_VD = 'digit_rut';
+    
+    // ...    
+}
+```
+
+## Route Model Binding by RUT
+
+You can use the `RoutesRut` trait to override the `resolveRouteBinding()` method of your Eloquent Model to look for its RUT if the field to identify is `rut`.
+
+```php
+use DarkGhostHunter\Lararut\HasRut;
+use DarkGhostHunter\Lararut\RoutesRut;
+
+class User extends Authenticatable
+{
+    use HasRut;
+    use RoutesRut;
+}
+```
+
+Then, you will be able to use Route Model Binding in your routes by issuing the `rut` as the name of the field to use to retrieve the model instance from the database.
+
+```php
+Route::get('usuario/{user:rut}', [UserController::class, 'show']);
+```
+
+> If the RUT is invalid, the model won't be found, so there is no need to validate it.
+
 ## Rut Collection
 
-This package register a callback to retrieve an array of RUTs as a Laravel Collection when using `many()` and `manyOrThrow()`.
+This package registers a callback to retrieve an array of RUTs as a Laravel Collection when using `many()` and `manyOrThrow()`.
 
 ```php
 $ruts = Rut::many([
@@ -427,93 +455,39 @@ $ruts = Rut::many([
 echo $ruts->first(); // "15.500.342-1"
 ```
 
-## Query Builder `find()`
+## Helpers
 
-In your Database you may have a model with the RUT number as the primary key. Using the default `find()` methods in that model with a full RUT will return unexpected results. 
-
-You can use the `FindsByRut` trait to overload these methods, that will conveniently take out the number from the RUT to find. 
+This package [includes the `rut()` global helper](https://github.com/DarkGhostHunter/RutUtils/#global-helper) file, which allows you to create a Rut instance anywhere in your code, or a Rut Generator if you don't issue any parameter.
 
 ```php
 <?php
 
-namespace App;
+namespace App\Http\Listeners;
 
-use DarkGhostHunter\Lararut\FindsByRut;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\Events\Lockout;
+use App\Notifications\ProbablyForgotHisPassword;
+use App\Notifications\SupportReadyToHelp;
+use App\Models\User;
 
-class User extends Authenticatable
+class LogFailedAttempt
 {
-    use FindsByRut;
-    
     /**
-     * The primary key for the model.
+     * Handle the event.
      *
-     * @var string
+     * @param  Lockout  $event
+     * @return void
      */
-    protected $primaryKey = 'rut_num';
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-    
-    // ...
+    public function handle(Lockout $event)
+    {
+        // Get the RUT from the request input
+        $rut = rut($event->request->input('rut'));
+        
+        // If the user who tried exists in the database, notify him.
+        if ($user = User::where('rut_num', $rut->num)->first()) {
+            $user->notify(new ProbablyForgotHisPassword());
+        }
+    }
 }
-```
-
-Once there, you can issue your full RUT to be found, even if is a Rut object.
-
-```php
-use \App\User;
-use DarkGhostHunter\RutUtils\Rut;
-
-$user = User::find('15500342-1');
-
-$user = User::findOrFail(new Rut(15500342, 1));
-
-$user = User::findMany([new Rut(15500342, 1), '7276742-K']);
-
-$user = User::findOrNew(new Rut(15500342, 1));
-```
-
-> These methods do not validate the incoming RUT. You should always validate the RUT using the new validator rules.
-
-## RUT Query Scope
-
-And as a last freebie, you can add the `QueriesRut` trait into your model to query the database by their RUT number. 
-
-```php
-<?php
-
-namespace App;
-
-use DarkGhostHunter\Lararut\QueriesRut;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable
-{
-    use QueriesRut;
-    
-    /**
-     * The column that holds the RUT number.
-     *
-     * @var bool
-     */
-    public $rutNumberColumn = 'rut_number';
-    
-    // ...
-}
-```
-
-The `$rutNumberColumn` property is optional, since by default the queries are run against the column named `rut_num`.
-
-```php
-use \App\User;
-use DarkGhostHunter\RutUtils\Rut;
-
-$user = User::whereRut('15500342-1')->first();
 ```
 
 ## License

@@ -18,13 +18,13 @@
         "php": ">=7.4",
         "illuminate/validation": "^7.0||^8.0",
         "illuminate/support": "^7.0||^8.0",
-        "darkghosthunter/rut-utils": "^3.0.0"
+        "darkghosthunter/rut-utils": "^3.0.1"
     },
     "require-dev": {
         "orchestra/testbench": "^5.0||^6.0",
-        "phpunit/phpunit": "^9.3",
+        "phpunit/phpunit": "^9.5.4",
         "mockery/mockery": "^1.4",
-        "doctrine/dbal": "^2.8"
+        "doctrine/dbal": "^2.13.1||^3.1"
     },
     "autoload": {
         "psr-4": {
