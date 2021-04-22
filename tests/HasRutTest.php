@@ -30,11 +30,6 @@ class HasRutTest extends TestCase
                     use HasRut;
 
                     protected $table = 'users';
-
-                    protected function getRutAttribute()
-                    {
-                        return new Rut($this->attributes['rut_num'], $this->attributes['rut_vd']);
-                    }
                 };
             }
         );
@@ -42,7 +37,12 @@ class HasRutTest extends TestCase
         parent::setUp();
     }
 
-    public function test_model_adds_builder_macros()
+    public function test_model_retrieves_rut_instance(): void
+    {
+        static::assertInstanceOf(Rut::class, $this->model->first()->rut);
+    }
+
+    public function test_model_adds_builder_macros(): void
     {
         $model = new DummyModel();
 
@@ -54,7 +54,7 @@ class HasRutTest extends TestCase
         static::assertTrue($model->newQuery()->hasMacro('orWhereRut'));
     }
 
-    public function test_model_finds_by_rut()
+    public function test_model_finds_by_rut(): void
     {
         static::assertEquals(1, DummyModel::findRut($this->model->first()->rut)->getKey());
         static::assertEquals(3, DummyModel::findRut(new Rut(20490006, 'K'))->getKey());
@@ -67,7 +67,7 @@ class HasRutTest extends TestCase
         );
     }
 
-    public function test_exception_finds_by_rut_invalid_rut()
+    public function test_exception_finds_by_rut_invalid_rut(): void
     {
         $this->expectException(InvalidRutException::class);
         $this->expectExceptionMessage('The given RUT [invalid-rut] is invalid');
@@ -77,7 +77,7 @@ class HasRutTest extends TestCase
         );
     }
 
-    public function test_model_finds_many_by_rut()
+    public function test_model_finds_many_by_rut(): void
     {
         static::assertCount(
             2,
@@ -87,7 +87,7 @@ class HasRutTest extends TestCase
         );
     }
 
-    public function test_model_finds_rut_or_fails()
+    public function test_model_finds_rut_or_fails(): void
     {
         static::assertInstanceOf(DummyModel::class, DummyModel::findRutOrFail($this->model->first()->rut));
 
@@ -99,7 +99,7 @@ class HasRutTest extends TestCase
         );
     }
 
-    public function test_model_finds_rut_or_fails_returns_exception_not_found()
+    public function test_model_finds_rut_or_fails_returns_exception_not_found(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -113,7 +113,7 @@ class HasRutTest extends TestCase
         DummyModel::findRutOrFail($rut);
     }
 
-    public function test_exception_model_finds_rut_or_fails_invalid_rut()
+    public function test_exception_model_finds_rut_or_fails_invalid_rut(): void
     {
         $this->expectException(InvalidRutException::class);
         $this->expectExceptionMessage('The given RUT [invalid-rut] is invalid');
@@ -121,7 +121,7 @@ class HasRutTest extends TestCase
         DummyModel::findRutOrFail([$this->model->first()->rut, 'invalid-rut']);
     }
 
-    public function test_find_rut_or_new()
+    public function test_find_rut_or_new(): void
     {
         static::assertEquals(1, DummyModel::findRutOrNew($this->model->first()->rut)->getKey());
 
@@ -131,7 +131,7 @@ class HasRutTest extends TestCase
         static::assertFalse($new->exists);
     }
 
-    public function test_error_finds_rut_or_new_invalid_rut()
+    public function test_error_finds_rut_or_new_invalid_rut(): void
     {
         $this->expectException(InvalidRutException::class);
         $this->expectExceptionMessage('The given RUT [invalid-rut] is invalid');
@@ -139,7 +139,7 @@ class HasRutTest extends TestCase
         DummyModel::findRutOrNew('invalid-rut');
     }
 
-    public function test_where_rut()
+    public function test_where_rut(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -151,7 +151,7 @@ class HasRutTest extends TestCase
         static::assertNull(DummyModel::whereRut($rut)->first());
     }
 
-    public function test_error_where_rut_invalid_rut()
+    public function test_error_where_rut_invalid_rut(): void
     {
         $this->expectException(InvalidRutException::class);
         $this->expectExceptionMessage('The given RUT [invalid-rut] is invalid');
@@ -159,7 +159,7 @@ class HasRutTest extends TestCase
         DummyModel::whereRut('invalid-rut');
     }
 
-    public function test_or_where_rut()
+    public function test_or_where_rut(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -173,7 +173,7 @@ class HasRutTest extends TestCase
         static::assertNull(DummyModel::where('id', 10)->orWhereRut($rut)->first());
     }
 
-    public function test_error_or_where_rut_invalid_rut()
+    public function test_error_or_where_rut_invalid_rut(): void
     {
         $this->expectException(InvalidRutException::class);
         $this->expectExceptionMessage('The given RUT [invalid-rut] is invalid');

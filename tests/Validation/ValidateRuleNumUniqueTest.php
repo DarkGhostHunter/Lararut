@@ -27,7 +27,7 @@ class ValidateRuleNumUniqueTest extends TestCase
         parent::setUp();
     }
 
-    public function testValidationRuleNumUnique()
+    public function testValidationRuleNumUnique(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -42,7 +42,7 @@ class ValidateRuleNumUniqueTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleNumUniqueIgnoringId()
+    public function testValidationRuleNumUniqueIgnoringId(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -56,7 +56,7 @@ class ValidateRuleNumUniqueTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleNumUniqueIgnoringModel()
+    public function testValidationRuleNumUniqueIgnoringModel(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -70,7 +70,7 @@ class ValidateRuleNumUniqueTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleNumUniqueWhere()
+    public function testValidationRuleNumUniqueWhere(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -95,7 +95,7 @@ class ValidateRuleNumUniqueTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testValidationRuleNumUniqueFailsWhenNoArguments()
+    public function testValidationRuleNumUniqueFailsWhenNoArguments(): void
     {
         $this->expectException(ArgumentCountError::class);
 

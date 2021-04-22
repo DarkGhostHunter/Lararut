@@ -25,7 +25,7 @@ class ValidateRutExistsTest extends TestCase
         parent::setUp();
     }
 
-    public function testRutExists()
+    public function testRutExists(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -38,7 +38,7 @@ class ValidateRutExistsTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testRutExistsWithColumnGuessing()
+    public function testRutExistsWithColumnGuessing(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -61,7 +61,7 @@ class ValidateRutExistsTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testRutExistsFailsWhenDoesntExists()
+    public function testRutExistsFailsWhenDoesntExists(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -78,7 +78,7 @@ class ValidateRutExistsTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testRutExistsFailsWhenItsInvalid()
+    public function testRutExistsFailsWhenItsInvalid(): void
     {
         User::make()->forceFill([
             'name' => 'Alice',

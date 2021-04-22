@@ -10,7 +10,7 @@ class RutCollectionCallbackTest extends TestCase
 {
     use RegistersPackage;
 
-    public function testReturnsCollection()
+    public function testReturnsCollection(): void
     {
         /** @var Collection $collection */
         $collection = Rut::many([

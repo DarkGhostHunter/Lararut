@@ -35,7 +35,7 @@ class QueriesRutTest extends TestCase
         parent::setUp();
     }
 
-    public function testWhereRut()
+    public function testWhereRut(): void
     {
         $rut = $this->model->inRandomOrder()->first(['rut_num', 'rut_vd']);
 
@@ -49,7 +49,7 @@ class QueriesRutTest extends TestCase
         static::assertTrue($this->model->whereRut($rut)->doesntExist());
     }
 
-    public function testWhereRutUsesCustomColumn()
+    public function testWhereRutUsesCustomColumn(): void
     {
         $this->app->make('db')->connection()
             ->getSchemaBuilder()

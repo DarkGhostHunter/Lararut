@@ -40,7 +40,7 @@ class FindsByRutTest extends TestCase
         parent::setUp();
     }
 
-    public function testFind()
+    public function testFind(): void
     {
         $user = $this->model->inRandomOrder()->first();
 
@@ -48,7 +48,7 @@ class FindsByRutTest extends TestCase
         static::assertInstanceOf(get_class($this->model), $this->model->find((string)$user->rut));
     }
 
-    public function testFindWithArray()
+    public function testFindWithArray(): void
     {
         $ruts = $this->model->all()->pluck('rut')->map->__toString()->toArray();
 
@@ -59,7 +59,7 @@ class FindsByRutTest extends TestCase
         static::assertCount(User::count(), $users);
     }
 
-    public function testFindOrFail()
+    public function testFindOrFail(): void
     {
         $user = $this->model->inRandomOrder()->first();
 
@@ -67,7 +67,7 @@ class FindsByRutTest extends TestCase
         static::assertInstanceOf(get_class($this->model), $this->model->findOrFail((string)$user->rut));
     }
 
-    public function testFindOrFailWithArray()
+    public function testFindOrFailWithArray(): void
     {
         $ruts = $this->model->all()->pluck('rut')->map->__toString()->toArray();
 
@@ -79,7 +79,7 @@ class FindsByRutTest extends TestCase
         static::assertCount(User::count(), $users);
     }
 
-    public function testFindOrFailExceptionWhenBelowResults()
+    public function testFindOrFailExceptionWhenBelowResults(): void
     {
         $this->expectException(ModelNotFoundException::class);
 
@@ -94,7 +94,7 @@ class FindsByRutTest extends TestCase
         $users = $this->model->findOrFail($ruts);
     }
 
-    public function testFindOrFailReturnsException()
+    public function testFindOrFailReturnsException(): void
     {
         $this->expectException(ModelNotFoundException::class);
 
@@ -105,7 +105,7 @@ class FindsByRutTest extends TestCase
         $this->model->findOrFail($rut);
     }
 
-    public function testFindMany()
+    public function testFindMany(): void
     {
         $ruts = $this->model->all()->pluck('rut')->map->__toString()->toArray();
 
@@ -116,7 +116,7 @@ class FindsByRutTest extends TestCase
         static::assertCount(User::count(), $users);
     }
 
-    public function testFindOrNewReturnsNewInstance()
+    public function testFindOrNewReturnsNewInstance(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -128,7 +128,7 @@ class FindsByRutTest extends TestCase
         static::assertFalse($user->exists);
     }
 
-    public function testFindOrNewReturnsFindable()
+    public function testFindOrNewReturnsFindable(): void
     {
         $rut = $this->model->inRandomOrder()->first()->rut;
 

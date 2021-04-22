@@ -27,7 +27,7 @@ class ValidateRuleRutExistsTest extends TestCase
         parent::setUp();
     }
 
-    public function testValidationRuleRutExists()
+    public function testValidationRuleRutExists(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -40,7 +40,7 @@ class ValidateRuleRutExistsTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutExistsWithColumnGuessing()
+    public function testValidationRuleRutExistsWithColumnGuessing(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -53,7 +53,7 @@ class ValidateRuleRutExistsTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutExistsWithWhere()
+    public function testValidationRuleRutExistsWithWhere(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -67,7 +67,7 @@ class ValidateRuleRutExistsTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutExistsFailsWhenNoArguments()
+    public function testValidationRuleRutExistsFailsWhenNoArguments(): void
     {
         $this->expectException(ArgumentCountError::class);
 
@@ -82,7 +82,7 @@ class ValidateRuleRutExistsTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutExistsFailWhenRutInvalid()
+    public function testValidationRuleRutExistsFailWhenRutInvalid(): void
     {
         User::make()->forceFill([
             'name' => 'Alice',
@@ -101,7 +101,7 @@ class ValidateRuleRutExistsTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testValidationRuleRutExistsFailWhenRutDoesntExists()
+    public function testValidationRuleRutExistsFailWhenRutDoesntExists(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -118,7 +118,7 @@ class ValidateRuleRutExistsTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testValidationRuleRutExistsFailWhenInvalidColumn()
+    public function testValidationRuleRutExistsFailWhenInvalidColumn(): void
     {
         $user = User::inRandomOrder()->first();
 

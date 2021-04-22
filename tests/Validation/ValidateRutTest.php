@@ -10,7 +10,7 @@ class ValidateRutTest extends TestCase
 {
     use RegistersPackage;
 
-    public function testRut()
+    public function testRut(): void
     {
         $validator = Validator::make([
             'rut_1' => '14328145-0',
@@ -27,7 +27,7 @@ class ValidateRutTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testRutInArray()
+    public function testRutInArray(): void
     {
         $validator = Validator::make([
             'rut' => ['14328145-0', '143281450', '19.743.721-9', 197437219, '1974WD!37ASDASD219.']
@@ -38,7 +38,7 @@ class ValidateRutTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testRutFailsOnInvalidRut()
+    public function testRutFailsOnInvalidRut(): void
     {
         $validator = Validator::make([
             'rut' => '14328145-K'
@@ -49,7 +49,7 @@ class ValidateRutTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testRutFailsOnSingleInvalidRutArray()
+    public function testRutFailsOnSingleInvalidRutArray(): void
     {
         $validator = Validator::make([
             'rut' => ['14328145-0', '14328145K', '19.743.721-9', 197437219, '1974WD!37ASDASD219.']
@@ -60,7 +60,7 @@ class ValidateRutTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testRutFailsOnAllInvalidRutArray()
+    public function testRutFailsOnAllInvalidRutArray(): void
     {
         $validator = Validator::make([
             'rut' => ['invalid', '14328145K', '18.765.432-1', '1974WD!37ASDASD219.K', '']
@@ -71,7 +71,7 @@ class ValidateRutTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testRutFailsOnAllRutArrayWithEmptyChild()
+    public function testRutFailsOnAllRutArrayWithEmptyChild(): void
     {
         $validator = Validator::make([
             'rut' => ['14328145-0', '143281450', '19.743.721-9', '1974WD!37ASDASD219.', '']

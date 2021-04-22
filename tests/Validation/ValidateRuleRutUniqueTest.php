@@ -26,7 +26,7 @@ class ValidateRuleRutUniqueTest extends TestCase
         parent::setUp();
     }
 
-    public function testValidationRuleRutUnique()
+    public function testValidationRuleRutUnique(): void
     {
         do {
             $rut = RutGenerator::make()->generate();
@@ -41,7 +41,7 @@ class ValidateRuleRutUniqueTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutUniqueIgnoringId()
+    public function testValidationRuleRutUniqueIgnoringId(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -55,7 +55,7 @@ class ValidateRuleRutUniqueTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutUniqueIgnoringModel()
+    public function testValidationRuleRutUniqueIgnoringModel(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -69,7 +69,7 @@ class ValidateRuleRutUniqueTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutUniqueIgnoringModelInIgnoreMethod()
+    public function testValidationRuleRutUniqueIgnoringModelInIgnoreMethod(): void
     {
         $user = User::inRandomOrder()->first();
 
@@ -83,7 +83,7 @@ class ValidateRuleRutUniqueTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testValidationRuleRutUniqueWhere()
+    public function testValidationRuleRutUniqueWhere(): void
     {
         $user = User::inRandomOrder()->first();
 

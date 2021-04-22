@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User;
 
 trait PreparesDatabase
 {
-    protected function prepareDatabase()
+    protected function prepareDatabase(): void
     {
         $this->loadLaravelMigrations();
 

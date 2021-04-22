@@ -10,7 +10,7 @@ class RutBlueprintMacrosTest extends TestCase
 {
     use RegistersPackage;
 
-    public function testHelperReturnsRutNumberColumn()
+    public function testHelperReturnsRutNumberColumn(): void
     {
         $blueprint = new Blueprint('test_table');
 
@@ -19,7 +19,7 @@ class RutBlueprintMacrosTest extends TestCase
         static::assertInstanceOf(ColumnDefinition::class, $number);
     }
 
-    public function testCreatesDatabaseWithRutColumns()
+    public function testCreatesDatabaseWithRutColumns(): void
     {
         /** @var \Illuminate\Database\Schema\Builder $schema */
         $schema = $this->app->make('db')->connection()->getSchemaBuilder();

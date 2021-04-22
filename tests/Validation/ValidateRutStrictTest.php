@@ -10,7 +10,7 @@ class ValidateRutStrictTest extends TestCase
 {
     use RegistersPackage;
 
-    public function testRutStrict()
+    public function testRutStrict(): void
     {
         $validator = Validator::make([
             'rut_1' => '14.328.145-0',
@@ -23,7 +23,7 @@ class ValidateRutStrictTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testRutStrictInArray()
+    public function testRutStrictInArray(): void
     {
         $validator = Validator::make([
             'rut' => ['14.328.145-0', '19.743.721-9']
@@ -34,7 +34,7 @@ class ValidateRutStrictTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
-    public function testRutStrictFailsOnInvalidFormat()
+    public function testRutStrictFailsOnInvalidFormat(): void
     {
         $validator = Validator::make([
             'rut' => '14328145-0'
@@ -45,7 +45,7 @@ class ValidateRutStrictTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testRutFailsOnInvalidRut()
+    public function testRutFailsOnInvalidRut(): void
     {
         $validator = Validator::make([
             'rut' => '14.328.145-K'
@@ -56,7 +56,7 @@ class ValidateRutStrictTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testRutStrictFailsOnSingleInvalidFormatRutArray()
+    public function testRutStrictFailsOnSingleInvalidFormatRutArray(): void
     {
         $validator = Validator::make([
             'rut' => ['14328145-K', '14.328.145-0', '19.743.721-9']
@@ -67,7 +67,7 @@ class ValidateRutStrictTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testRutStrictFailsOnAllInvalidFormatRutArray()
+    public function testRutStrictFailsOnAllInvalidFormatRutArray(): void
     {
         $validator = Validator::make([
             'rut' => ['14.328.145-0', '19.743.721-9', '19743721-9']
@@ -78,7 +78,7 @@ class ValidateRutStrictTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
-    public function testRutFailsOnAllRutArrayWithEmptyChild()
+    public function testRutFailsOnAllRutArrayWithEmptyChild(): void
     {
         $validator = Validator::make([
             'rut' => ['14.328.145-0', '19.743.721-9', '']
