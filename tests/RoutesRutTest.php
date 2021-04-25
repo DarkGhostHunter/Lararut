@@ -70,11 +70,27 @@ class RoutesRutTest extends TestCase
 
         $this->get("/user/invalid-rut")->assertNotFound();
     }
+
+    public function test_exception_routes_rut_without_trait()
+    {
+        Route::get('/user/{routable:rut}', function (DummyUnroutableModel $routable) {
+            return $routable->getKey();
+        })->middleware('web');
+
+        $this->get("/user/anyrut")->assertStatus(500);
+    }
 }
 
 class DummyRoutableModel extends Model
 {
     use HasRut;
+    use RoutesRut;
+
+    protected $table = 'users';
+}
+
+class DummyUnroutableModel extends Model
+{
     use RoutesRut;
 
     protected $table = 'users';

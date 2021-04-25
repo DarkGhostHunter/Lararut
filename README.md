@@ -362,9 +362,13 @@ If you plan to use the Number as an index, which may speed up queries to look fo
 
 ## RUT trait for Models
 
-You can add the `HasRut` trait to a model that has a RUT in its columns. This is the recommended way to use RUT in your application models.
+This package contains two traits: `HasRut` and `RoutesRut`.
 
-> To use this trait, ensure your model saves the RUT Number and RUT Verification digit in separate columns. If that's not your case, use your own scopes and helpers.
+> To use these traits, ensure your model saves the RUT Number and RUT Verification digit in separate columns.
+
+### `HasRut`
+
+This trait conveniently adds a RUT Scope to a model that has a RUT in its columns, and the `rut` property which returns a `Rut` instance.
 
 ```php
 <?php
@@ -382,7 +386,7 @@ class User extends Authenticatable
 }
 ```
 
-With that, you will have access to convenient RUT queries:
+With that, you will have access to convenient RUT queries shorthands:
 
 * `findRut()`: Finds a record by the given RUT.
 * `findManyRut()`: Finds many records by the given RUTs.
@@ -393,15 +397,13 @@ With that, you will have access to convenient RUT queries:
 
 > These RUT queries work over the RUT Number for convenience, as the RUT Verification Digit should be verified on persistence.
 
-### `rut` property
-
-Additionally, this trait includes the `rut` property which is dynamically created from the RUT Number and RUT Verification Digit columns.
+The `rut` property is dynamically created from the RUT Number and RUT Verification Digit columns, which uses a caster underneath.
 
 ```php
 echo $user->rut; // "20490006-K"
 ```
 
-### Configuring the RUT columns
+#### Configuring the RUT columns
 
 By convention, the trait uses `rut_num` and `rut_vd` as the default columns to retrieve and save the RUT Number and RUT Verification Digit, respectively.
 
@@ -419,17 +421,16 @@ class User extends Authenticatable
 }
 ```
 
-## Route Model Binding by RUT
+### `RoutesRut`
 
 You can use the `RoutesRut` trait to override the `resolveRouteBinding()` method of your Eloquent Model to look for its RUT if the field to identify is `rut`.
 
+
 ```php
-use DarkGhostHunter\Lararut\HasRut;
 use DarkGhostHunter\Lararut\RoutesRut;
 
 class User extends Authenticatable
 {
-    use HasRut;
     use RoutesRut;
 }
 ```
@@ -486,6 +487,16 @@ class LogFailedAttempt
         if ($user = User::where('rut_num', $rut->num)->first()) {
             $user->notify(new ProbablyForgotHisPassword());
         }
+    }
+    
+    /**
+     * Creates many RUTs. 
+     * 
+     * @return array|\DarkGhostHunter\RutUtils\Rut
+     */
+    public function generateRuts()
+    {
+        return rut()->generate(100);
     }
 }
 ```

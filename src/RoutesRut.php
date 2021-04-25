@@ -4,6 +4,7 @@ namespace DarkGhostHunter\Lararut;
 
 use DarkGhostHunter\RutUtils\Exceptions\InvalidRutException;
 use Illuminate\Database\Eloquent\Model;
+use RuntimeException;
 
 trait RoutesRut
 {
@@ -18,6 +19,10 @@ trait RoutesRut
     public function resolveRouteBinding($value, $field = null): ?Model
     {
         if ($field === 'rut') {
+            if (!in_array(HasRut::class, class_uses_recursive($this), true)) {
+                throw new RuntimeException('The model ' . get_class($this) . ' must use the `HasRut` trait.');
+            }
+
             try {
                 return $this->findRut($value);
             } catch (InvalidRutException $e) {
