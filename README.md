@@ -64,7 +64,7 @@ This may come handy in situations when the user presses a wrong button into an R
 ```php
 <?php
 
-use \DarkGhostHunter\RutUtils\Rut;
+use DarkGhostHunter\RutUtils\Rut;
 
 $rut = Rut::make(request()->input('rut'));
 ``` 
@@ -425,12 +425,15 @@ class User extends Authenticatable
 
 You can use the `RoutesRut` trait to override the `resolveRouteBinding()` method of your Eloquent Model to look for its RUT if the field to identify is `rut`.
 
+> Ensure you also add the `HasRut` trait, as it will use the added query scopes.
 
 ```php
+use DarkGhostHunter\Lararut\HasRut;
 use DarkGhostHunter\Lararut\RoutesRut;
 
 class User extends Authenticatable
 {
+    use HasRut;
     use RoutesRut;
 }
 ```
@@ -438,10 +441,12 @@ class User extends Authenticatable
 Then, you will be able to use Route Model Binding in your routes by issuing the `rut` as the name of the field to use to retrieve the model instance from the database.
 
 ```php
-Route::get('usuario/{user:rut}', [UserController::class, 'show']);
+Route::get('usuario/{user:rut}', function (User $user) {
+    return $user;
+});
 ```
 
-> If the RUT is invalid, the model won't be found, so there is no need to validate it.
+> If the RUT is invalid, the model won't be found, so there is no need to validate the rut while route-binding.
 
 ## Rut Collection
 
