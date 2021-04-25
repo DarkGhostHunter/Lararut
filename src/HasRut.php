@@ -2,8 +2,6 @@
 
 namespace DarkGhostHunter\Lararut;
 
-use DarkGhostHunter\RutUtils\Rut;
-
 /**
  * @method \Illuminate\Database\Eloquent\Collection|static[]|static|null findRut(mixed $rut, array $columns = [])
  * @method \Illuminate\Database\Eloquent\Collection|static[] findManyRut(\Illuminate\Contracts\Support\Arrayable|iterable|array $ruts, array $columns = [])
@@ -17,7 +15,18 @@ use DarkGhostHunter\RutUtils\Rut;
 trait HasRut
 {
     /**
-     * Boot the soft deleting trait for a model.
+     * Initialize the HasRut trait.
+     *
+     * @return void
+     * @internal
+     */
+    public function initializeHasRut(): void
+    {
+        $this->mergeCasts(['rut' => Casts\CastRut::class]);
+    }
+
+    /**
+     * Boot the HasRut trait.
      *
      * @return void
      * @internal
@@ -55,15 +64,5 @@ trait HasRut
     public function getQualifiedRutNumColumn(): string
     {
         return $this->qualifyColumn($this->getRutNumColumn());
-    }
-
-    /**
-     * Returns the RUT of the user as a Rut instance.
-     *
-     * @return \DarkGhostHunter\RutUtils\Rut
-     */
-    protected function getRutAttribute(): Rut
-    {
-        return Rut::make($this->getAttribute($this->getRutNumColumn()), $this->getAttribute($this->getRutVdColumn()));
     }
 }
