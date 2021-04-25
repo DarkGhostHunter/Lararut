@@ -20,7 +20,7 @@ trait HasRut
      * @return void
      * @internal
      */
-    public function initializeCastsRut(): void
+    public function initializeHasRut(): void
     {
         $this->mergeCasts(['rut' => Casts\CastRut::class]);
     }

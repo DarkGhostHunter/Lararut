@@ -22,7 +22,7 @@ class CastRut implements CastsAttributes
     {
         $this->ensureModelHasRut($model);
 
-        return Rut::make($attributes[$model->getRutNumColumn()], $attributes[$this->getRutVdColumn()]);
+        return Rut::make($attributes[$model->getRutNumColumn()], $attributes[$model->getRutVdColumn()]);
     }
 
     /**

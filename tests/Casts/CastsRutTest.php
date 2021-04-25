@@ -28,7 +28,6 @@ class CastsRutTest extends TestCase
             $this->model = new class extends User {
                 use HasRut;
                 protected $table = 'users';
-                protected $casts = ['rut' => CastRut::class];
             };
         });
 
