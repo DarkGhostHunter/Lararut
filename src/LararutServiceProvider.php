@@ -73,10 +73,19 @@ class LararutServiceProvider extends ServiceProvider
     protected function macroBlueprint(): void
     {
         Blueprint::macro('rut', function() {
-            $num = $this->unsignedInteger('rut_num');
-            $this->char('rut_vd', 1);
+            /** @var \Illuminate\Database\Schema\Blueprint $this */
+            return tap($this->unsignedInteger('rut_num'), function () {
+                /** @var \Illuminate\Database\Schema\Blueprint $this */
+                $this->char('rut_vd', 1);
+            });
+        });
 
-            return $num;
+        Blueprint::macro('rutNullable', function () {
+            /** @var \Illuminate\Database\Schema\Blueprint $this */
+            return tap($this->unsignedInteger('rut_num')->nullable(), function () {
+                /** @var \Illuminate\Database\Schema\Blueprint $this */
+                $this->char('rut_vd', 1)->nullable();
+            });
         });
     }
 

@@ -350,15 +350,25 @@ echo $validator->fails(); // true
 
 ## Database Blueprint helper
 
-If you're creating your database from the ground up, you don't need to manually create the RUT columns. Just use the `rut()` helper in the Blueprint:
+If you're creating your database from the ground up, you don't need to manually create the RUT columns. Just use the `rut()` or `rutNullable()` helpers in the Blueprint:
 
 ```php
 Schema::create('users', function (Blueprint $table) {
     $table->rut();
+    
+    // ...
+});
+
+Schema::create('company', function (Blueprint $table) {
+    $table->rutNullable();
+    
+    // ...
 });
 ```
 
-If you plan to use the Number as an index, which may speed up queries to look for RUTs, you can just index the Number column by fluently adding `primary()`, `index()` or `unique()` depending on your data needs. This is because it has more sense to index the Number rather than the whole RUT, and these shouldn't be nullable.
+> The `rutNullable()` method creates both Number and Verification Digit columns as nullable.
+
+If you plan to use the Number as an index, which may speed up queries to look for RUTs, you can just index the Number column by fluently adding `primary()`, `index()` or `unique()` depending on your database needs. This is because it has more sense to index only the Number rather than the whole RUT.
 
 ## RUT trait for Models
 
