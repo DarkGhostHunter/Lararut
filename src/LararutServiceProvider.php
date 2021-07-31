@@ -124,6 +124,8 @@ class LararutServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'lararut');
-        $this->publishes([__DIR__ . '/../resources/lang' => $this->app->resourcePath('lang/vendor/lararut')]);
+        $this->publishes([
+            __DIR__ . '/../resources/lang' => $this->app->resourcePath('lang/vendor/lararut')
+        ], 'translations');
     }
 }

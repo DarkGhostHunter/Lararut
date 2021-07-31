@@ -31,6 +31,10 @@ composer require darkghosthunter/lararut
 
 This package includes handy rules to validate RUTs incoming from your frontend. Compared to prior versions, they're are more easy to use and understand.
 
+All validation rules messages are translated. You can add your own translation by publishing the files:
+
+    php artisan vendor:publish --provider="DarkGhostHunter\Lararut\LararutServiceProvider" --tag="translations"
+
 > Database rules will automatically normalize `K` verification _digit_ to search in the database.
 
 ### `rut`
