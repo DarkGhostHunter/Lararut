@@ -38,6 +38,17 @@ class ValidateNumExistsTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
+    public function testReturnsMessage(): void
+    {
+        $validator = Validator::make([
+            'rut' => 'invalid_rut'
+        ], [
+            'rut' => 'num_exists:testing.users'
+        ]);
+
+        static::assertEquals('The rut must be a valid RUT.', $validator->getMessageBag()->first('rut'));
+    }
+
     public function testNumExistsWithColumnGuessing(): void
     {
         $user = User::inRandomOrder()->first();

@@ -68,6 +68,19 @@ class ValidateRutUniqueTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
+    public function testReturnsMessage(): void
+    {
+        $user = User::inRandomOrder()->first();
+
+        $validator = Validator::make([
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
+        ], [
+            'rut' => 'rut_unique:testing.users,rut_num,rut_vd'
+        ]);
+
+        static::assertEquals('The rut has already been taken.', $validator->getMessageBag()->first('rut'));
+    }
+
     public function testUniqueFailsWhenInvalidRut(): void
     {
         $validator = Validator::make([

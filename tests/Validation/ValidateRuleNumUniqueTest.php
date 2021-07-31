@@ -95,6 +95,20 @@ class ValidateRuleNumUniqueTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
+    public function testReturnsMessage(): void
+    {
+        $user = User::inRandomOrder()->first();
+
+        $validator = Validator::make([
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
+        ], [
+            'rut' => Rule::numUnique('testing.users', 'rut_num')
+                ->where('name', $user->name)
+        ]);
+
+        static::assertEquals('The rut has already been taken.', $validator->getMessageBag()->first('rut'));
+    }
+
     public function testValidationRuleNumUniqueFailsWhenNoArguments(): void
     {
         $this->expectException(ArgumentCountError::class);

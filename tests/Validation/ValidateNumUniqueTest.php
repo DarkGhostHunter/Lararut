@@ -40,6 +40,19 @@ class ValidateNumUniqueTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
+    public function testReturnsMessage(): void
+    {
+        $user = User::inRandomOrder()->first();
+
+        $validator = Validator::make([
+            'rut' => Rut::make($user->rut_num . $user->rut_vd)->toFormattedString()
+        ], [
+            'rut' => 'num_unique:testing.users,rut_num'
+        ]);
+
+        static::assertEquals('The rut has already been taken.', $validator->getMessageBag()->first('rut'));
+    }
+
     public function testUniqueWithColumnGuessing(): void
     {
         do {

@@ -3,8 +3,10 @@
 namespace DarkGhostHunter\Lararut;
 
 use DarkGhostHunter\RutUtils\Rut;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\ColumnDefinition;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rule;
@@ -17,13 +19,13 @@ class LararutServiceProvider extends ServiceProvider
      * @var array
      */
     protected const RULES = [
-        'rut'        => [[ValidatesRut::class, 'validateRut'], 'lararut::validation.rut',],
-        'rut_strict' => [[ValidatesRut::class, 'validateRutStrict'], 'lararut::validation.strict',],
-        'rut_equal'  => [[ValidatesRut::class, 'validateRutEqual'], 'lararut::validation.equal',],
-        'rut_exists' => [[ValidatesRut::class, 'validateRutExists'], 'lararut::validation.exists',],
-        'rut_unique' => [[ValidatesRut::class, 'validateRutUnique'], 'lararut::validation.unique',],
-        'num_exists' => [[ValidatesRut::class, 'validateNumExists'], 'lararut::validation.num_exists',],
-        'num_unique' => [[ValidatesRut::class, 'validateNumUnique'], 'lararut::validation.num_unique',],
+        ['rut', 'validateRut', 'lararut::validation.rut'],
+        ['rut_strict', 'validateRutStrict', 'lararut::validation.strict'],
+        ['rut_equal', 'validateRutEqual', 'lararut::validation.equal'],
+        ['rut_exists', 'validateRutExists', 'lararut::validation.exists'],
+        ['rut_unique', 'validateRutUnique', 'lararut::validation.unique'],
+        ['num_exists', 'validateNumExists', 'lararut::validation.exists'],
+        ['num_unique', 'validateNumUnique', 'lararut::validation.unique'],
     ];
 
     /**
@@ -46,9 +48,12 @@ class LararutServiceProvider extends ServiceProvider
      */
     protected function registerRules(): void
     {
-        $this->app->resolving('validator', static function (Factory $validator) {
-            foreach (static::RULES as $key => $rule) {
-                $validator->extend($key, ...$rule);
+        $this->app->resolving('validator', static function (Factory $validator, Application $app): void {
+            /** @var \Illuminate\Contracts\Translation\Translator $translator */
+            $translator = $app->make('translator');
+
+            foreach (static::RULES as [$rule, $extension, $key]) {
+                $validator->extend($rule, [ValidatesRut::class, $extension], $translator->get($key));
             }
         });
     }
@@ -60,9 +65,7 @@ class LararutServiceProvider extends ServiceProvider
      */
     protected function addRutCollectionCallback(): void
     {
-        Rut::after(function ($ruts) {
-            return new Collection($ruts);
-        });
+        Rut::after(static fn (iterable $ruts): Collection => new Collection($ruts));
     }
 
     /**
@@ -72,17 +75,17 @@ class LararutServiceProvider extends ServiceProvider
      */
     protected function macroBlueprint(): void
     {
-        Blueprint::macro('rut', function() {
+        Blueprint::macro('rut', function(): ColumnDefinition {
             /** @var \Illuminate\Database\Schema\Blueprint $this */
-            return tap($this->unsignedInteger('rut_num'), function () {
+            return tap($this->unsignedInteger('rut_num'), function (): void {
                 /** @var \Illuminate\Database\Schema\Blueprint $this */
                 $this->char('rut_vd', 1);
             });
         });
 
-        Blueprint::macro('rutNullable', function () {
+        Blueprint::macro('rutNullable', function (): ColumnDefinition {
             /** @var \Illuminate\Database\Schema\Blueprint $this */
-            return tap($this->unsignedInteger('rut_num')->nullable(), function () {
+            return tap($this->unsignedInteger('rut_num')->nullable(), function (): void {
                 /** @var \Illuminate\Database\Schema\Blueprint $this */
                 $this->char('rut_vd', 1)->nullable();
             });
@@ -96,20 +99,31 @@ class LararutServiceProvider extends ServiceProvider
      */
     protected function macroRules(): void
     {
-        Rule::macro('rutExists', static function ($table, $numColumn = 'NULL', $rutColumn = 'NULL') {
+        Rule::macro('rutExists', static function ($table, $numColumn = 'NULL', $rutColumn = 'NULL'): Rules\RutExists {
             return new Rules\RutExists($table, $numColumn, $rutColumn);
         });
 
-        Rule::macro('rutUnique', static function ($table, $numColumn = 'NULL', $rutColumn = 'NULL') {
+        Rule::macro('rutUnique', static function ($table, $numColumn = 'NULL', $rutColumn = 'NULL'): Rules\RutUnique {
             return new Rules\RutUnique($table, $numColumn, $rutColumn);
         });
 
-        Rule::macro('numExists', static function ($table, $column = 'NULL') {
+        Rule::macro('numExists', static function ($table, $column = 'NULL'): Rules\NumExists {
             return new Rules\NumExists($table, $column);
         });
 
-        Rule::macro('numUnique', static function ($table, $column = 'NULL') {
+        Rule::macro('numUnique', static function ($table, $column = 'NULL'): Rules\NumUnique {
             return new Rules\NumUnique($table, $column);
         });
+    }
+
+    /**
+     * Bootstrap any package services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'lararut');
+        $this->publishes([__DIR__ . '/../resources/lang' => $this->app->resourcePath('lang/vendor/lararut')]);
     }
 }
