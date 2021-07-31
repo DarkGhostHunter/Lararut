@@ -78,6 +78,23 @@ class ValidateRutExistsTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
+    public function testReturnsMessage(): void
+    {
+        $user = User::inRandomOrder()->first();
+
+        do {
+            $rut = RutGenerator::make()->generate();
+        } while ($rut === Rut::make($user->rut_num . $user->rut_vd));
+
+        $validator = Validator::make([
+            'rut' => $rut->toFormattedString(),
+        ], [
+            'rut' => 'rut_exists:testing.users,rut_num,rut_vd'
+        ]);
+
+        static::assertEquals('The rut must be a valid RUT.', $validator->getMessageBag()->first('rut'));
+    }
+
     public function testRutExistsFailsWhenItsInvalid(): void
     {
         User::make()->forceFill([

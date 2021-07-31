@@ -57,6 +57,17 @@ class ValidateRutEqualTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
+    public function testReturnsMessage(): void
+    {
+        $validator = Validator::make([
+            'rut' => '19.743.721-9',
+        ], [
+            'rut' => 'rut_equal:143281450'
+        ]);
+
+        static::assertEquals('The rut must be a valid RUT.', $validator->getMessageBag()->first('rut'));
+    }
+
     public function testRutEqualFailsOnNotEqualOnArray(): void
     {
         $validator = Validator::make([

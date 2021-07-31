@@ -49,6 +49,17 @@ class ValidateRutTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
+    public function testReturnsMessage(): void
+    {
+        $validator = Validator::make([
+            'rut' => '14328145-K'
+        ], [
+            'rut' => 'rut'
+        ]);
+
+        static::assertEquals('The rut must be a valid RUT.', $validator->getMessageBag()->first('rut'));
+    }
+
     public function testRutFailsOnSingleInvalidRutArray(): void
     {
         $validator = Validator::make([

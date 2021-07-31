@@ -45,6 +45,17 @@ class ValidateRutStrictTest extends TestCase
         static::assertTrue($validator->fails());
     }
 
+    public function testReturnsMessage(): void
+    {
+        $validator = Validator::make([
+            'rut' => '14328145-0'
+        ], [
+            'rut' => 'rut_strict'
+        ]);
+
+        static::assertEquals('The rut must be a properly formatted RUT.', $validator->getMessageBag()->first('rut'));
+    }
+
     public function testRutFailsOnInvalidRut(): void
     {
         $validator = Validator::make([

@@ -82,6 +82,25 @@ class ValidateRuleRutExistsTest extends TestCase
         static::assertFalse($validator->fails());
     }
 
+    public function testReturnsMessage(): void
+    {
+        User::make()->forceFill([
+            'name' => 'Alice',
+            'email' => 'alice.doe@email.com',
+            'password' => '123456',
+            'rut_num' => 18765432,
+            'rut_vd' => 1,
+        ])->save();
+
+        $validator = Validator::make([
+            'rut' => '18.765.432-1'
+        ], [
+            'rut' => Rule::rutExists('testing.users', 'rut_num', 'rut_vd')
+        ]);
+
+        static::assertEquals('The rut must be a valid RUT.', $validator->getMessageBag()->first('rut'));
+    }
+
     public function testValidationRuleRutExistsFailWhenRutInvalid(): void
     {
         User::make()->forceFill([

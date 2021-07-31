@@ -10,14 +10,14 @@ class CastRut implements CastsAttributes
     /**
      * Transform the attribute from the underlying model values.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model|\DarkGhostHunter\Lararut\HasRut  $model
      * @param  string  $key
      * @param  mixed  $value
      * @param  array  $attributes
      *
-     * @return mixed
+     * @return \DarkGhostHunter\RutUtils\Rut
      */
-    public function get($model, string $key, $value, array $attributes)
+    public function get($model, string $key, $value, array $attributes): Rut
     {
         return Rut::make($attributes[$model->getRutNumColumn()], $attributes[$model->getRutVdColumn()]);
     }
@@ -25,14 +25,14 @@ class CastRut implements CastsAttributes
     /**
      * Transform the attribute to its underlying model values.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model|\DarkGhostHunter\Lararut\HasRut  $model
      * @param  string  $key
      * @param  mixed  $value
      * @param  array  $attributes
      *
-     * @return mixed
+     * @return array
      */
-    public function set($model, string $key, $value, array $attributes)
+    public function set($model, string $key, $value, array $attributes): array
     {
         if (!$value instanceof Rut) {
             $value = Rut::make($value);
