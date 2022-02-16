@@ -14,6 +14,7 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "abandoned": "laragear/rut",
     "require": {
         "php": ">=7.4",
         "illuminate/validation": "^7.0||^8.0",
